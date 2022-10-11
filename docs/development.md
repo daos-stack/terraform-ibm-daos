@@ -93,3 +93,13 @@ To run [pre-commit](https://pre-commit.com/) on all files prior to staging them
 ```shell
 pre-commit run --all-files
 ```
+
+## Submitting PRs
+
+Direct pushes are not allowed to the `develop` and `main` branches.
+
+You must submit PRs.
+
+All PRs must have an associated ticket in JIRA.
+
+> **TODO:** Document the process and add an example here.

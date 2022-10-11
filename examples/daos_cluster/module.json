@@ -1,0 +1,213 @@
+{
+  "header": "Copyright 2022 Intel Corporation\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n     http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.",
+  "footer": "",
+  "inputs": [
+    {
+      "name": "admin_instance_base_name",
+      "type": "string",
+      "description": "Admin instance base name",
+      "default": "daos-admin",
+      "required": false
+    },
+    {
+      "name": "client_instance_base_name",
+      "type": "string",
+      "description": "DAOS client instance base name",
+      "default": "daos-client",
+      "required": false
+    },
+    {
+      "name": "client_instance_count",
+      "type": "number",
+      "description": "Number of DAOS instances to deploy",
+      "default": 1,
+      "required": false
+    },
+    {
+      "name": "client_instance_profile_name",
+      "type": "string",
+      "description": "Name of the instance profile to use for DAOS clients",
+      "default": "bx2d-48x192",
+      "required": false
+    },
+    {
+      "name": "client_os_image_name",
+      "type": "string",
+      "description": "Name of disk image to use for DAOS clients",
+      "default": "ibm-rocky-linux-8-6-minimal-amd64-2",
+      "required": false
+    },
+    {
+      "name": "cluster_prefix",
+      "type": "string",
+      "description": "Prefix to assign to all VPC resource names",
+      "default": "daos-example",
+      "required": false
+    },
+    {
+      "name": "ibmcloud_api_key",
+      "type": "string",
+      "description": "IBM Cloud API Key",
+      "default": null,
+      "required": true
+    },
+    {
+      "name": "region",
+      "type": "string",
+      "description": "IBM Cloud Region",
+      "default": "us-south",
+      "required": false
+    },
+    {
+      "name": "security_group_ssh_allowed_ips",
+      "type": "list(object({\n    region        = string\n    cidr          = string\n    first_ipv4_ip = string\n    last_ipv4_ip  = string\n  }))",
+      "description": "Map of corporate proxies for ingress rules in Security Groups",
+      "default": [
+        {
+          "cidr": "0.0.0.0/0",
+          "first_ipv4_ip": "0.0.0.0",
+          "last_ipv4_ip": "0.0.0.0",
+          "region": "ANY"
+        }
+      ],
+      "required": false
+    },
+    {
+      "name": "security_groups",
+      "type": "list(string)",
+      "description": "List of security groups to attach to add to DAOS admin instances",
+      "default": [],
+      "required": false
+    },
+    {
+      "name": "server_instance_base_name",
+      "type": "string",
+      "description": "DAOS Server instance base name",
+      "default": "daos-server",
+      "required": false
+    },
+    {
+      "name": "server_instance_count",
+      "type": "number",
+      "description": "Number of DAOS instances to deploy",
+      "default": 1,
+      "required": false
+    },
+    {
+      "name": "server_instance_profile_name",
+      "type": "string",
+      "description": "Name of the instance profile to use for DAOS servers",
+      "default": "bx2d-48x192",
+      "required": false
+    },
+    {
+      "name": "server_os_image_name",
+      "type": "string",
+      "description": "Name of disk image to use for DAOS servers",
+      "default": "ibm-rocky-linux-8-6-minimal-amd64-2",
+      "required": false
+    },
+    {
+      "name": "ssh_key_names",
+      "type": "list(string)",
+      "description": "List of SSH key names to add to DAOS instances",
+      "default": [],
+      "required": false
+    },
+    {
+      "name": "subnet_name",
+      "type": "string",
+      "description": "Name of the VPC subnet for the DAOS cluster",
+      "default": null,
+      "required": false
+    },
+    {
+      "name": "vpc_name",
+      "type": "string",
+      "description": "Name of the VPC for the DAOS cluster",
+      "default": null,
+      "required": false
+    },
+    {
+      "name": "zone",
+      "type": "string",
+      "description": "IBM Cloud Zone",
+      "default": "us-south-3",
+      "required": false
+    }
+  ],
+  "modules": [
+    {
+      "name": "daos_admin",
+      "source": "../../modules/daos_admin",
+      "version": "",
+      "description": null
+    },
+    {
+      "name": "daos_client",
+      "source": "../../modules/daos_client",
+      "version": "",
+      "description": null
+    },
+    {
+      "name": "daos_server",
+      "source": "../../modules/daos_server",
+      "version": "",
+      "description": null
+    }
+  ],
+  "outputs": [
+    {
+      "name": "cluster_prefix",
+      "description": null
+    },
+    {
+      "name": "daos_admin_floating_ip_address",
+      "description": "DAOS Admin instance floating IP address"
+    },
+    {
+      "name": "region",
+      "description": "IBM Cloud region"
+    },
+    {
+      "name": "server_instance_base_name",
+      "description": null
+    },
+    {
+      "name": "server_instance_count",
+      "description": null
+    },
+    {
+      "name": "server_instance_profile_name",
+      "description": null
+    },
+    {
+      "name": "server_os_image_name",
+      "description": null
+    },
+    {
+      "name": "ssh_key_names",
+      "description": null
+    },
+    {
+      "name": "subnet_name",
+      "description": null
+    },
+    {
+      "name": "vpc_name",
+      "description": null
+    },
+    {
+      "name": "zone",
+      "description": "IBM Cloud region"
+    }
+  ],
+  "providers": [],
+  "requirements": [
+    {
+      "name": "ibm",
+      "version": "1.46.0"
+    }
+  ],
+  "resources": []
+}

@@ -1,0 +1,34 @@
+ibmcloud_api_key = "<ibmcloud_api_key>"
+region           = "us-south"
+zone             = "us-south-3"
+vpc_name         = "<vpc_name>"
+subnet_name      = "<subnet_name>"
+ssh_key_names    = [<ssh_key_names>]
+
+
+#
+# daos_admin module variables
+#
+
+admin_instance_base_name = "daos-admin"
+security_groups          = [<security_groups>]
+
+
+#
+# daos_server module variables
+#
+
+server_instance_count        = 3
+server_instance_profile_name = "bx2-2x8" # See https://cloud.ibm.com/docs/vpc?topic=vpc-profiles
+server_instance_base_name    = "daos-server"
+server_os_image_name         = "ibm-redhat-8-4-minimal-amd64-2"
+
+
+#
+# daos_server module variables
+#
+
+client_instance_count        = 10
+client_instance_profile_name = "bx2-2x8" # # See https://cloud.ibm.com/docs/vpc?topic=vpc-profiles
+client_instance_base_name    = "daos-client"
+client_os_image_name         = "redhat-8-4-minimal-amd64-2"

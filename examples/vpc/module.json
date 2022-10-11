@@ -13,7 +13,7 @@
       "name": "ipv4_cidr_block",
       "type": "string",
       "description": "The IPv4 range of the subnet",
-      "default": "10.0.1.0/24",
+      "default": "10.1.1.0/24",
       "required": false
     },
     {

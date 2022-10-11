@@ -43,7 +43,7 @@ variable "vpc_prefix" {
 
 variable "ipv4_cidr_block" {
   description = "The IPv4 range of the subnet"
-  default     = "10.0.1.0/24"
+  default     = "10.1.1.0/24"
   type        = string
 }
 

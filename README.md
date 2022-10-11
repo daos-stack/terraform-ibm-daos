@@ -24,8 +24,13 @@ Repository structure
 └── variables.tf          - Variables for the main module
 ```
 
+## Warning
 
 The Terraform modules and examples in this repo are currently in the very
 early development stage.
 
 The content in this repo should not be used for Production environments or demos.
+
+## Development
+
+If you are contributing content in this repository, please see the [development](docs/development.md) documentation.

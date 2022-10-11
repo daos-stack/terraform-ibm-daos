@@ -58,7 +58,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_ibmcloud_api_key"></a> [ibmcloud\_api\_key](#input\_ibmcloud\_api\_key) | IBM Cloud API Key | `string` | n/a | yes |
-| <a name="input_ipv4_cidr_block"></a> [ipv4\_cidr\_block](#input\_ipv4\_cidr\_block) | The IPv4 range of the subnet | `string` | `"10.0.1.0/24"` | no |
+| <a name="input_ipv4_cidr_block"></a> [ipv4\_cidr\_block](#input\_ipv4\_cidr\_block) | The IPv4 range of the subnet | `string` | `"10.1.1.0/24"` | no |
 | <a name="input_region"></a> [region](#input\_region) | IBM Cloud Region | `string` | `"us-south"` | no |
 | <a name="input_security_group_ssh_allowed_ips"></a> [security\_group\_ssh\_allowed\_ips](#input\_security\_group\_ssh\_allowed\_ips) | Corporate proxies for ingress rules in Security Groups | <pre>list(object({<br>    name          = string<br>    cidr          = string<br>    first_ipv4_ip = string<br>    last_ipv4_ip  = string<br>  }))</pre> | <pre>[<br>  {<br>    "cidr": "0.0.0.0/0",<br>    "first_ipv4_ip": "0.0.0.0",<br>    "last_ipv4_ip": "0.0.0.0",<br>    "name": "ANY"<br>  },<br>  {<br>    "cidr": "10.1.0.0/16",<br>    "first_ipv4_ip": "10.1.1.1",<br>    "last_ipv4_ip": "10.1.255.255",<br>    "name": "VPC"<br>  }<br>]</pre> | no |
 | <a name="input_vpc_prefix"></a> [vpc\_prefix](#input\_vpc\_prefix) | Prefix to assign to all VPC resource names | `string` | `"daos-example"` | no |
