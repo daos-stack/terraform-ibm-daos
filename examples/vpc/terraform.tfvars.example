@@ -1,0 +1,105 @@
+ibmcloud_api_key = "<your_api_key_here>"
+region           = "us-south"
+zone             = "us-south-3"
+vpc_prefix       = "<your_username_here>-dev"
+ipv4_cidr_block  = "10.1.0.0/16"
+
+# Intel Proxy IPs
+security_group_ssh_allowed_ips = [
+  {
+    region        = "US / Americas"
+    cidr          = "134.134.139.64/27"
+    first_ipv4_ip = "134.134.139.65"
+    last_ipv4_ip  = "134.134.139.94"
+  },
+  {
+    region        = "US / Americas"
+    cidr          = "134.134.137.64/27"
+    first_ipv4_ip = "134.134.137.65"
+    last_ipv4_ip  = "134.134.137.94"
+  },
+  {
+    region        = "US / Americas"
+    cidr          = "192.55.54.32/27"
+    first_ipv4_ip = "192.55.54.33"
+    last_ipv4_ip  = "192.55.54.62"
+  },
+  {
+    region        = "US / Americas"
+    cidr          = "192.55.55.32/27"
+    first_ipv4_ip = "192.55.55.33"
+    last_ipv4_ip  = "192.55.55.62"
+  },
+  {
+    region        = "Europe"
+    cidr          = "192.198.151.32/27"
+    first_ipv4_ip = "192.198.151.33"
+    last_ipv4_ip  = "192.198.151.62"
+  },
+  {
+    region        = "Europe"
+    cidr          = "134.191.227.32/27"
+    first_ipv4_ip = "134.191.227.33"
+    last_ipv4_ip  = "134.191.227.62"
+  },
+  {
+    region        = "Europe"
+    cidr          = "134.191.220.64/27"
+    first_ipv4_ip = "134.191.220.65"
+    last_ipv4_ip  = "134.191.220.94"
+  },
+  {
+    region        = "Europe"
+    cidr          = "134.191.221.64/27"
+    first_ipv4_ip = "134.191.221.65"
+    last_ipv4_ip  = "134.191.221.94"
+  },
+  {
+    region        = "Middle East"
+    cidr          = "134.191.232.64/27"
+    first_ipv4_ip = "134.191.232.65"
+    last_ipv4_ip  = "134.191.232.94"
+  },
+  {
+    region        = "Middle East"
+    cidr          = "134.191.233.192/27"
+    first_ipv4_ip = "134.191.233.193"
+    last_ipv4_ip  = "134.191.233.222"
+  },
+  {
+    region        = "Asia"
+    cidr          = "192.55.79.160/27"
+    first_ipv4_ip = "192.55.79.161"
+    last_ipv4_ip  = "192.55.79.190"
+  },
+  {
+    region        = "Asia"
+    cidr          = "198.175.68.32/27"
+    first_ipv4_ip = "198.175.68.33"
+    last_ipv4_ip  = "198.175.68.62"
+  },
+  {
+    region        = "Asia"
+    cidr          = "192.198.146.160/27"
+    first_ipv4_ip = "192.198.146.161"
+    last_ipv4_ip  = "192.198.146.190"
+  },
+  {
+    region        = "Asia"
+    cidr          = "192.198.147.160/27"
+    first_ipv4_ip = "192.198.147.161"
+    last_ipv4_ip  = "192.198.147.190"
+  },
+  {
+    region        = "Asia"
+    cidr          = "192.102.204.32/27"
+    first_ipv4_ip = "192.102.204.33"
+    last_ipv4_ip  = "192.102.204.62"
+  },
+  {
+  region        = "Asia"
+  cidr          = "192.55.46.32/27"
+  first_ipv4_ip = "192.55.46.33"
+  last_ipv4_ip  = "192.55.46.62"
+  }
+]

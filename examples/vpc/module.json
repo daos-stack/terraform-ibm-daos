@@ -1,0 +1,206 @@
+{
+  "header": "Copyright 2022 Intel Corporation\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n     http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.",
+  "footer": "",
+  "inputs": [
+    {
+      "name": "ibmcloud_api_key",
+      "type": "string",
+      "description": "IBM Cloud API Key",
+      "default": null,
+      "required": true
+    },
+    {
+      "name": "ipv4_cidr_block",
+      "type": "string",
+      "description": "The IPv4 range of the subnet",
+      "default": "10.0.1.0/24",
+      "required": false
+    },
+    {
+      "name": "region",
+      "type": "string",
+      "description": "IBM Cloud Region",
+      "default": "us-south",
+      "required": false
+    },
+    {
+      "name": "security_group_ssh_allowed_ips",
+      "type": "list(object({\n    name          = string\n    cidr          = string\n    first_ipv4_ip = string\n    last_ipv4_ip  = string\n  }))",
+      "description": "Corporate proxies for ingress rules in Security Groups",
+      "default": [
+        {
+          "cidr": "0.0.0.0/0",
+          "first_ipv4_ip": "0.0.0.0",
+          "last_ipv4_ip": "0.0.0.0",
+          "name": "ANY"
+        },
+        {
+          "cidr": "10.1.0.0/16",
+          "first_ipv4_ip": "10.1.1.1",
+          "last_ipv4_ip": "10.1.255.255",
+          "name": "VPC"
+        }
+      ],
+      "required": false
+    },
+    {
+      "name": "vpc_prefix",
+      "type": "string",
+      "description": "Prefix to assign to all VPC resource names",
+      "default": "daos-example",
+      "required": false
+    },
+    {
+      "name": "zone",
+      "type": "string",
+      "description": "IBM Cloud Zone",
+      "default": "us-south-3",
+      "required": false
+    }
+  ],
+  "modules": [],
+  "outputs": [
+    {
+      "name": "public_gateway_id",
+      "description": "The ID of the public gateway"
+    },
+    {
+      "name": "public_gateway_name",
+      "description": "The name of the public gateway"
+    },
+    {
+      "name": "region",
+      "description": "IBM Cloud region"
+    },
+    {
+      "name": "subnet_name",
+      "description": "The name of the VPC subnet"
+    },
+    {
+      "name": "vpc_id",
+      "description": "The ID of the VPC"
+    },
+    {
+      "name": "vpc_name",
+      "description": "The name of the VPC"
+    },
+    {
+      "name": "zone",
+      "description": "IBM Cloud region"
+    }
+  ],
+  "providers": [
+    {
+      "name": "ibm",
+      "alias": null,
+      "version": "1.46.0"
+    }
+  ],
+  "requirements": [
+    {
+      "name": "ibm",
+      "version": "1.46.0"
+    }
+  ],
+  "resources": [
+    {
+      "type": "is_network_acl",
+      "name": "example_acl",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "managed",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "is_public_gateway",
+      "name": "example_gw",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "managed",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "is_security_group",
+      "name": "example_sg",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "managed",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "is_security_group_rule",
+      "name": "example_egr_all",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "managed",
+      "version": "1.46.0",
+      "description": "Have to enable the outbound traffic here. Default is off"
+    },
+    {
+      "type": "is_security_group_rule",
+      "name": "example_sgr_tcp_all",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "managed",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "is_subnet",
+      "name": "example_sn",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "managed",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "is_vpc",
+      "name": "example_vpc",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "managed",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "is_vpc_address_prefix",
+      "name": "example",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "managed",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "is_region",
+      "name": "region",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "data",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "is_zone",
+      "name": "zone",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "data",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "resource_group",
+      "name": "example_rg",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "data",
+      "version": "1.46.0",
+      "description": null
+    }
+  ]
+}

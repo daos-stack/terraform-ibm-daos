@@ -13,41 +13,40 @@
 # limitations under the License.
 
 ---
-repos: []
-  # - repo: local
-  #   hooks:
-  #     - id: addlicense
-  #       name: addlicense
-  #       entry: tools/autodoc/addlicense.sh
-  #       language: script
-  #       types: ['text']
-  #       exclude: ^(\.terraform\/.*$|\..*|README.md)
-  #       exclude_types: ['json']
-  #       pass_filenames: true
-  #       require_serial: true
-  # - repo: https://github.com/antonbabenko/pre-commit-terraform
-  #   rev: v1.64.0
-  #   hooks:
-  #     - id: terraform_fmt
-  #     - id: terraform_tflint
-  #       args:
-  #         - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
-  #     - id: terraform_validate
-  # - repo: local
-  #   hooks:
-  #     - id: terraform-readme
-  #       name: terraform-readme
-  #       entry: tools/autodoc/terraform_docs.sh
-  #       language: script
-  #       types: ['terraform']
-  #       exclude: \.terraform\/.*$
-  #       pass_filenames: true
-  #       require_serial: true
-  # - repo: https://github.com/jumanjihouse/pre-commit-hooks
-  #   rev: 3.0.0
-  #   hooks:
-  #     - id: check-mailmap
-  #     - id: forbid-binary
-  #     - id: git-check  # Configure in .gitattributes
-  #     - id: markdownlint # Configure in .mdlrc
-  #     - id: shellcheck
+repos:
+  - repo: local
+    hooks:
+      - id: addlicense
+        name: addlicense
+        entry: tools/autodoc/addlicense.sh
+        language: script
+        types: ['text']
+        exclude: ^(\.terraform\/.*$|\..*|README.md)
+        exclude_types: ['json']
+        pass_filenames: true
+        require_serial: true
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.76.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_tflint
+        args:
+          - --args=--config=__GIT_WORKING_DIR__.tflint.hcl
+      - id: terraform_validate
+  - repo: local
+    hooks:
+      - id: terraform-readme
+        name: terraform-readme
+        entry: tools/autodoc/terraform_docs.sh
+        language: script
+        types: ['terraform']
+        exclude: \.terraform\/.*$
+        pass_filenames: true
+        require_serial: true
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: check-mailmap
+      - id: forbid-binary
+      - id: git-check      # Configure in .gitattributes
+      - id: shellcheck
