@@ -43,8 +43,7 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [ibm_is_instance.daos_server](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_instance) | resource |
-| [ibm_is_instance_template.daos_server_it](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_instance_template) | resource |
+| [ibm_is_bare_metal_server.daos_server](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_bare_metal_server) | resource |
 | [ibm_is_image.server_os_image](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_image) | data source |
 | [ibm_is_ssh_key.ssh_keys](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_ssh_key) | data source |
 | [ibm_is_subnet.daos_server_sn](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_subnet) | data source |
@@ -55,6 +54,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_baremetal_image_id"></a> [baremetal\_image\_id](#input\_baremetal\_image\_id) | n/a | `string` | `"r006-f137ea64-0d27-4d81-afe0-353fd0557e81"` | no |
 | <a name="input_ibmcloud_api_key"></a> [ibmcloud\_api\_key](#input\_ibmcloud\_api\_key) | IBM Cloud API Key | `string` | n/a | yes |
 | <a name="input_instance_base_name"></a> [instance\_base\_name](#input\_instance\_base\_name) | Prefix to assign to all instances | `string` | `"daos-server"` | no |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | Number of DAOS instances to deploy | `number` | `1` | no |

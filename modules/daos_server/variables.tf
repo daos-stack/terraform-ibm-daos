@@ -91,3 +91,8 @@ variable "ssh_key_names" {
 #   type        = list(string)
 #   default     = []
 # }
+
+variable "baremetal_image_id" {
+  type    = string
+  default = "r006-f137ea64-0d27-4d81-afe0-353fd0557e81" # ibm-rocky-linux-8-6-minimal-amd64-4
+}

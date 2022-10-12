@@ -86,7 +86,7 @@ No resources.
 | <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | List of security groups to attach to add to DAOS admin instances | `list(string)` | `[]` | no |
 | <a name="input_server_instance_base_name"></a> [server\_instance\_base\_name](#input\_server\_instance\_base\_name) | DAOS Server instance base name | `string` | `"daos-server"` | no |
 | <a name="input_server_instance_count"></a> [server\_instance\_count](#input\_server\_instance\_count) | Number of DAOS instances to deploy | `number` | `1` | no |
-| <a name="input_server_instance_profile_name"></a> [server\_instance\_profile\_name](#input\_server\_instance\_profile\_name) | Name of the instance profile to use for DAOS servers | `string` | `"bx2d-48x192"` | no |
+| <a name="input_server_instance_profile_name"></a> [server\_instance\_profile\_name](#input\_server\_instance\_profile\_name) | Name of the instance profile to use for DAOS servers | `string` | `"bx2d-metal-96x384"` | no |
 | <a name="input_server_os_image_name"></a> [server\_os\_image\_name](#input\_server\_os\_image\_name) | Name of disk image to use for DAOS servers | `string` | `"ibm-rocky-linux-8-6-minimal-amd64-2"` | no |
 | <a name="input_ssh_key_names"></a> [ssh\_key\_names](#input\_ssh\_key\_names) | List of SSH key names to add to DAOS instances | `list(string)` | `[]` | no |
 | <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | Name of the VPC subnet for the DAOS cluster | `string` | `null` | no |

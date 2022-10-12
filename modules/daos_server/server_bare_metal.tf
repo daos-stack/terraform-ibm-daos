@@ -14,6 +14,25 @@
  * limitations under the License.
  */
 
-#
-# TODO: Add bare metal configuration here
-#
+#-------------------------------------------------------------------------------
+# Single instance resource with a count
+#-------------------------------------------------------------------------------
+resource "ibm_is_bare_metal_server" "daos_server" {
+  count   = var.instance_count
+  name    = format("%s-%04s", var.instance_base_name, "${count.index + 1}")
+  profile = var.instance_profile_name
+  image   = var.baremetal_image_id
+  zone    = var.zone
+  keys    = [for ssh_key in local.ssh_key_ids : ssh_key.id]
+  vpc     = data.ibm_is_vpc.daos_server_vpc.id
+  primary_network_interface {
+    name                      = "eth0"
+    enable_infrastructure_nat = true
+    subnet                    = data.ibm_is_subnet.daos_server_sn.id
+    #security_groups            = [ibm_is_security_group.login_sg.id]
+  }
+
+  timeouts {
+    create = "40m"
+  }
+}

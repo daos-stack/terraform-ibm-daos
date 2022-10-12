@@ -97,7 +97,7 @@
       "name": "server_instance_profile_name",
       "type": "string",
       "description": "Name of the instance profile to use for DAOS servers",
-      "default": "bx2d-48x192",
+      "default": "bx2d-metal-96x384",
       "required": false
     },
     {

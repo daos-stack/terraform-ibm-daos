@@ -113,7 +113,7 @@ variable "server_instance_base_name" {
 
 variable "server_instance_profile_name" {
   description = "Name of the instance profile to use for DAOS servers"
-  default     = "bx2d-48x192" # mx2d-48x384
+  default     = "bx2d-metal-96x384"
   type        = string
 }
 
