@@ -68,3 +68,7 @@ output "ssh_key_names" {
 #   description = "List of security groups attached to DAOS server instances"
 #   value = var.security_groups
 # }
+
+output "user_data_script" {
+  value = local.user_data_script
+}

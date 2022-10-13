@@ -1,0 +1,34 @@
+#!/bin/bash
+
+install_pkgs() {
+  dnf install -y curl wget git ansible-core
+}
+
+install_collections() {
+  ansible-galaxy collection install --clear-response-cache --force-with-deps git+https://github.com/markaolson/ansible-collection-daos.git,develop
+  ansible-galaxy collection install --clear-response-cache --force-with-dep community.general
+}
+
+run_ansible_playbooks() {
+  ansible-playbook -c local -i '127.0.0.1,' --extra-vars="daos_roles=['admin']" markaolson.daos.daos_local
+  # TODO: Pull the DAOS collection from galaxy when it is published there
+  # %{for p in playbooks}
+  # git clone ${p.repo_url}
+  # cd $(basename ${p.repo_url} | sed 's/.git//')
+  # cd ${p.playbook_dir}
+  # ansible-playbook \
+  #   %{~ for a in p.ansible_playbook_args ~}
+  #   ${a} \
+  #   %{~ endfor ~}
+  #   --extra-vars="${~ join(" ", p.extra_vars) ~}"
+  #   ${p.playbook_file}
+  # %{ endfor }
+}
+
+main() {
+  install_pkgs
+  install_collections
+  run_ansible_playbooks
+}
+
+main

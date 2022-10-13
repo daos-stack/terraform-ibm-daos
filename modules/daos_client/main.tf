@@ -26,6 +26,12 @@ locals {
     }
   ]
 
+  user_data_script = templatefile("${path.module}/templates/user_data.sh.tftpl",
+    {
+      playbooks = var.user_data_ansible_playbooks
+    }
+  )
+
   # first_client  = format("%s-%04s", var.instance_base_name, 1)
   # clients       = var.instance_count == 1 ? local.first_client : format("%s-[%04s-%04s]", var.instance_base_name, 1, var.instance_count)
   # max_aps       = var.instance_count > 5 ? 5 : (var.instance_count % 2) == 1 ? var.instance_count : var.instance_count - 1
@@ -69,6 +75,9 @@ resource "ibm_is_instance_template" "daos_client_it" {
   vpc  = data.ibm_is_vpc.daos_client_vpc.id
   zone = var.zone
   keys = [for ssh_key in local.ssh_key_ids : ssh_key.id]
+
+  metadata_service_enabled = true
+  user_data                = local.user_data_script
 
 }
 

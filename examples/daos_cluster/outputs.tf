@@ -44,9 +44,13 @@ output "ssh_key_names" {
   value       = var.ssh_key_names
 }
 
-output "daos_admin_floating_ip_address" {
+output "admin_instance_floating_ip_address" {
   description = "DAOS Admin instance floating IP address"
   value       = module.daos_admin.floating_ip.address
+}
+
+output "admin_user_data_script" {
+  value = module.daos_admin.user_data_script
 }
 
 output "server_instance_count" {

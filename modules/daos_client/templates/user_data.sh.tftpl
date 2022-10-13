@@ -10,7 +10,7 @@ install_collections() {
 }
 
 run_ansible_playbooks() {
-  ansible-playbook -c local -i '127.0.0.1,' --extra-vars="daos_roles=['server']" markaolson.daos.daos_local
+  ansible-playbook -c local -i '127.0.0.1,' --extra-vars="daos_roles=['client']" markaolson.daos.daos_local
 }
 
 main() {

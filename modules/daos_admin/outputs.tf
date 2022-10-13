@@ -63,3 +63,7 @@ output "security_groups" {
   description = "List of Security Groups attached to the DAOS Admin instance"
   value       = [for sg in data.ibm_is_security_groups.vpc.security_groups : sg.name]
 }
+
+output "user_data_script" {
+  value = local.user_data_script
+}

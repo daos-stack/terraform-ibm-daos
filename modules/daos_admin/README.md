@@ -67,6 +67,7 @@ No modules.
 | <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | List of security groups to attach to add to DAOS admin instances | `list(string)` | `[]` | no |
 | <a name="input_ssh_key_names"></a> [ssh\_key\_names](#input\_ssh\_key\_names) | List of SSH key names to add to DAOS admin instances | `list(string)` | `[]` | no |
 | <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | Name of the VPC subnet | `string` | `null` | no |
+| <a name="input_user_data_ansible_playbooks"></a> [user\_data\_ansible\_playbooks](#input\_user\_data\_ansible\_playbooks) | List of Ansible playbooks to be run in user\_data script | <pre>list(object({<br>    repo_name             = string<br>    repo_url              = string<br>    playbook_dir          = string<br>    playbook_file         = string<br>    repo_url              = string<br>    ansible_playbook_args = list(string)<br>    extra_vars            = list(string)<br>  }))</pre> | <pre>[<br>  {<br>    "ansible_playbook_args": [<br>      "-c local",<br>      "-i '127.0.0.1,'",<br>      "-u root"<br>    ],<br>    "extra_vars": [<br>      "daos_roles=['admin']",<br>      "daos_version='2.2.0'"<br>    ],<br>    "playbook_dir": "playbooks",<br>    "playbook_file": "daos.yaml",<br>    "repo_name": "maodevops/ansible-collection-daos",<br>    "repo_url": "https://github.com/markaolson/ansible-collection-daos.git"<br>  }<br>]</pre> | no |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name of the VPC | `string` | `null` | no |
 | <a name="input_zone"></a> [zone](#input\_zone) | IBM Cloud Zone | `string` | `"us-south-3"` | no |
 
@@ -82,6 +83,7 @@ No modules.
 | <a name="output_security_groups"></a> [security\_groups](#output\_security\_groups) | List of Security Groups attached to the DAOS Admin instance |
 | <a name="output_ssh_key_names"></a> [ssh\_key\_names](#output\_ssh\_key\_names) | Names of SSH keys attached to DAOS Admin instance |
 | <a name="output_subnet_name"></a> [subnet\_name](#output\_subnet\_name) | Name of the subnet for the DAOS Admin instance |
+| <a name="output_user_data_script"></a> [user\_data\_script](#output\_user\_data\_script) | n/a |
 | <a name="output_vpc_name"></a> [vpc\_name](#output\_vpc\_name) | Name of VPC containing the DAOS Admin instance |
 | <a name="output_zone"></a> [zone](#output\_zone) | IBM Cloud region |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

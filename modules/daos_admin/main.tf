@@ -32,6 +32,13 @@ locals {
       id = ssh_key.id
     }
   ]
+
+  user_data_script = templatefile("${path.module}/templates/user_data.sh.tftpl",
+    {
+      playbooks = var.user_data_ansible_playbooks
+    }
+  )
+
 }
 
 data "ibm_is_vpc" "daos_admin_vpc" {
@@ -77,6 +84,7 @@ resource "ibm_is_instance_template" "daos_admin_it" {
   keys = [for ssh_key in local.ssh_key_ids : ssh_key.id]
 
   metadata_service_enabled = true
+  user_data                = local.user_data_script
 
 }
 

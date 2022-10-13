@@ -92,6 +92,35 @@ variable "ssh_key_names" {
 #   default     = []
 # }
 
+variable "user_data_ansible_playbooks" {
+  description = "List of Ansible playbooks to be run in user_data script"
+  type = list(object({
+    repo_name             = string
+    repo_url              = string
+    playbook_dir          = string
+    playbook_file         = string
+    repo_url              = string
+    ansible_playbook_args = list(string)
+    extra_vars            = list(string)
+  }))
+  default = [
+    {
+      repo_name     = "maodevops/ansible-collection-daos"
+      repo_url      = "https://github.com/markaolson/ansible-collection-daos.git"
+      playbook_dir  = "playbooks"
+      playbook_file = "daos.yaml"
+      ansible_playbook_args = [
+        "-c local",
+        "-i '127.0.0.1,'",
+        "-u root"
+      ]
+      extra_vars = [
+        "daos_roles=['admin']",
+        "daos_version='2.2.0'"
+      ]
+    }
+  ]
+}
 
 
 #

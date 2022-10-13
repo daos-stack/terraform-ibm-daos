@@ -158,12 +158,16 @@
   ],
   "outputs": [
     {
-      "name": "cluster_prefix",
+      "name": "admin_instance_floating_ip_address",
+      "description": "DAOS Admin instance floating IP address"
+    },
+    {
+      "name": "admin_user_data_script",
       "description": null
     },
     {
-      "name": "daos_admin_floating_ip_address",
-      "description": "DAOS Admin instance floating IP address"
+      "name": "cluster_prefix",
+      "description": null
     },
     {
       "name": "region",

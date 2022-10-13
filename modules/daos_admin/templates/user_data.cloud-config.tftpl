@@ -1,0 +1,26 @@
+#cloud-config
+
+# dnf install -y git curl wget ansible-core
+packages:
+  - git
+  - curl
+  - wget
+  - ansible-core
+packages_update: true
+packages_upgrade: true
+
+ansible-galaxy collection install git+https://github.com/markaolson/ansible-collection-daos.git,develop
+
+runcmd:
+  - [ sh, -c, curl, -sS, -O, "https://raw.githubusercontent.com/markaolson/ansible-collection-daos/develop/cloud-config-requirements.yml" ]
+  - [ sh, -c, ansible-galaxy, collection, install, -r, cloud-config-requirements.yml]
+  - [ sh, -c, ansible-playbook, collection, install, -r, cloud-config-requirements.yml]
+  - [ ansible-playbook maodevops.daos.daos ]
+  - systemctl start httpd
+  - sudo systemctl enable httpd
+  - [ sh, -c, "usermod -a -G apache ec2-user" ]
+  - [ sh, -c, "chown -R ec2-user:apache /var/www" ]
+  - chmod 2775 /var/www
+  - [ find, /var/www, -type, d, -exec, chmod, 2775, {}, \; ]
+  - [ find, /var/www, -type, f, -exec, chmod, 0664, {}, \; ]
+  - [ sh, -c, 'echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php' ]

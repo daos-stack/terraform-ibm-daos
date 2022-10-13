@@ -29,6 +29,9 @@ resource "ibm_is_instance_template" "daos_server_it" {
   vpc  = data.ibm_is_vpc.daos_server_vpc.id
   zone = var.zone
   keys = [for ssh_key in local.ssh_key_ids : ssh_key.id]
+
+  metadata_service_enabled = true
+  user_data                = local.user_data_script
 }
 
 #-------------------------------------------------------------------------------

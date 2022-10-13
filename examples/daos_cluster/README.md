@@ -97,8 +97,9 @@ No resources.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_admin_instance_floating_ip_address"></a> [admin\_instance\_floating\_ip\_address](#output\_admin\_instance\_floating\_ip\_address) | DAOS Admin instance floating IP address |
+| <a name="output_admin_user_data_script"></a> [admin\_user\_data\_script](#output\_admin\_user\_data\_script) | n/a |
 | <a name="output_cluster_prefix"></a> [cluster\_prefix](#output\_cluster\_prefix) | n/a |
-| <a name="output_daos_admin_floating_ip_address"></a> [daos\_admin\_floating\_ip\_address](#output\_daos\_admin\_floating\_ip\_address) | DAOS Admin instance floating IP address |
 | <a name="output_region"></a> [region](#output\_region) | IBM Cloud region |
 | <a name="output_server_instance_base_name"></a> [server\_instance\_base\_name](#output\_server\_instance\_base\_name) | n/a |
 | <a name="output_server_instance_count"></a> [server\_instance\_count](#output\_server\_instance\_count) | n/a |

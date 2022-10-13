@@ -26,6 +26,12 @@ locals {
     }
   ]
 
+  user_data_script = templatefile("${path.module}/templates/user_data.sh.tftpl",
+    {
+      playbooks = var.user_data_ansible_playbooks
+    }
+  )
+
   # first_server  = format("%s-%04s", var.instance_base_name, 1)
   # servers       = var.instance_count == 1 ? local.first_server : format("%s-[%04s-%04s]", var.instance_base_name, 1, var.instance_count)
   # max_aps       = var.instance_count > 5 ? 5 : (var.instance_count % 2) == 1 ? var.instance_count : var.instance_count - 1
