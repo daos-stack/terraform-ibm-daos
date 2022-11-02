@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-#-------------------------------------------------------------------------------
-# Single instance resource with a count
-#-------------------------------------------------------------------------------
 resource "ibm_is_bare_metal_server" "daos_server" {
-  count   = var.instance_count
-  name    = format("%s-%04s", var.instance_base_name, "${count.index + 1}")
-  profile = var.instance_profile_name
-  image   = var.baremetal_image_id
-  zone    = var.zone
-  keys    = [for ssh_key in local.ssh_key_ids : ssh_key.id]
-  vpc     = data.ibm_is_vpc.daos_server_vpc.id
+  count = var.enable_bare_metal ? var.instance_count : 0
+  name  = format("%s-%03s", var.instance_base_name, "${count.index + 1}")
+
+  image     = var.bare_metal_image_id
+  keys      = [for ssh_key in local.ssh_key_ids : ssh_key.id]
+  profile   = var.instance_bare_metal_profile_name
+  user_data = local.user_data_script
+  vpc       = data.ibm_is_vpc.daos_server_vpc.id
+  zone      = var.zone
+
   primary_network_interface {
     name                      = "eth0"
     enable_infrastructure_nat = true
     subnet                    = data.ibm_is_subnet.daos_server_sn.id
-    #security_groups            = [ibm_is_security_group.login_sg.id]
+    security_groups           = [for sg in data.ibm_is_security_group.server : sg.id]
   }
 
   timeouts {

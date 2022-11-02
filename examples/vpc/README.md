@@ -1,6 +1,63 @@
 # VPC Example
 
-Use this Terraform configuration to create a VPC that is used specifically for running the DAOS Cluster example in `examples/daos_cluster`
+## About
+
+Use this Terraform configuration to create a VPC that can be used to deploy the DAOS Cluster example in [examples/daos_cluster](../daos_cluster/README.md)
+
+This Terraform configuration will create a multi-zone VPC in one region.
+
+![](ibm_multi-zone_vpc.png)
+
+- Within one region a subnet will be created for each zone.
+- The VCP will have 3 security groups
+  - A default security group - Typically this will not be used.
+  - A bastion security group - Should be attached to the daos-admin instance. This allows ingress SSH from specific CIDRs to the daos-admin instance.
+  - An instance security group - Should be attached to DAOS servers and clients. Allows ingress tcp communication from the subnet only.
+
+## Instructions for creating the VPC
+
+1. Create the terraform.tfvars file and modify the `terraform.tfvars`  file by replacing the values in `< >` brackets with your specific settings.
+
+   ```bash
+   cd examples/vpc
+   cp terraform.tfvars.example terraform.tfvars
+   sed -i "s/<prefix>/${USER}/g" terraform.tfvars
+   sed -i "s/<ibmcloud_api_key>/${IBMCLOUD_API_KEY}/g" terraform.tfvars
+   ```
+
+   It is recommended that you use your username for the `prefix` variable. This will allow you to identify your VPC resources in a multi-user environment.
+
+   If you don't have the `IBMCLOUD_API_KEY` environment variable set in your shell, you will need to edit the `terraform.tfvars` file and update the `ibmcloud_api_key` value.
+
+
+   The `bastion_sg_ssh_allowed_ips` variable contains a list of CIDRs that you will allow ingress on port 22. This list of CIDRs will be added to the bastion security group which will be attached to the daos-admin instance.
+
+   > NOTE!
+   > In the `terraform.tfvars.example` file the `bastion_sg_ssh_allowed_ips` variable value is commented out. The commented value contains the CIDR `0.0.0.0/0` which allows any host on the internet ingress on port 22 to any instance that contains a floating IP and is associated with the security group. It is highly recommended not to use this setting. Only use specific IPs or CIDRs for your company's proxy servers or the current IP of your workstation.
+
+
+2. Create the VPC
+
+   ```bash
+   terraform init
+   terraform plan
+   terraform apply
+   ```
+
+3. Note the outputs from Terraform
+
+   Make a note of the output values from the Terraform state.
+
+   These values will be needed in the `terraform.tfvars` file for the the [examples/daos_cluster](../daos_cluster/README.md) configuration.
+
+   You can always run
+
+   ```bash
+   terraform output
+   ```
+
+   in the `examples/vpc` directory later to view the output values again.
+
 
 ## Terraform Reference
 
@@ -41,38 +98,39 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [ibm_is_network_acl.example_acl](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_network_acl) | resource |
-| [ibm_is_public_gateway.example_gw](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_public_gateway) | resource |
-| [ibm_is_security_group.example_sg](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group) | resource |
-| [ibm_is_security_group_rule.example_egr_all](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
-| [ibm_is_security_group_rule.example_sgr_tcp_all](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
-| [ibm_is_subnet.example_sn](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_subnet) | resource |
-| [ibm_is_vpc.example_vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_vpc) | resource |
-| [ibm_is_vpc_address_prefix.example](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_vpc_address_prefix) | resource |
+| [ibm_is_network_acl.example](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_network_acl) | resource |
+| [ibm_is_public_gateway.example](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_public_gateway) | resource |
+| [ibm_is_security_group.bastion](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group) | resource |
+| [ibm_is_security_group.instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group) | resource |
+| [ibm_is_security_group_rule.bastion_egress_all](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
+| [ibm_is_security_group_rule.bastion_ingress_ssh](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
+| [ibm_is_security_group_rule.instance_egress](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
+| [ibm_is_security_group_rule.instance_ingress](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
+| [ibm_is_subnet.subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_subnet) | resource |
+| [ibm_is_vpc.example](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_vpc) | resource |
 | [ibm_is_region.region](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_region) | data source |
-| [ibm_is_zone.zone](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_zone) | data source |
-| [ibm_resource_group.example_rg](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/resource_group) | data source |
+| [ibm_is_zones.regional_zones](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_zones) | data source |
+| [ibm_resource_group.example](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/resource_group) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_bastion_sg_ssh_allowed_ips"></a> [bastion\_sg\_ssh\_allowed\_ips](#input\_bastion\_sg\_ssh\_allowed\_ips) | Corporate proxies for ingress rules in Security Groups | <pre>list(object({<br>    name = string<br>    cidr = string<br>  }))</pre> | <pre>[<br>  {<br>    "cidr": "0.0.0.0/0",<br>    "name": "ANY"<br>  }<br>]</pre> | no |
 | <a name="input_ibmcloud_api_key"></a> [ibmcloud\_api\_key](#input\_ibmcloud\_api\_key) | IBM Cloud API Key | `string` | n/a | yes |
-| <a name="input_ipv4_cidr_block"></a> [ipv4\_cidr\_block](#input\_ipv4\_cidr\_block) | The IPv4 range of the subnet | `string` | `"10.1.1.0/24"` | no |
-| <a name="input_region"></a> [region](#input\_region) | IBM Cloud Region | `string` | `"us-south"` | no |
-| <a name="input_security_group_ssh_allowed_ips"></a> [security\_group\_ssh\_allowed\_ips](#input\_security\_group\_ssh\_allowed\_ips) | Corporate proxies for ingress rules in Security Groups | <pre>list(object({<br>    name          = string<br>    cidr          = string<br>    first_ipv4_ip = string<br>    last_ipv4_ip  = string<br>  }))</pre> | <pre>[<br>  {<br>    "cidr": "0.0.0.0/0",<br>    "first_ipv4_ip": "0.0.0.0",<br>    "last_ipv4_ip": "0.0.0.0",<br>    "name": "ANY"<br>  },<br>  {<br>    "cidr": "10.1.0.0/16",<br>    "first_ipv4_ip": "10.1.1.1",<br>    "last_ipv4_ip": "10.1.255.255",<br>    "name": "VPC"<br>  }<br>]</pre> | no |
-| <a name="input_vpc_prefix"></a> [vpc\_prefix](#input\_vpc\_prefix) | Prefix to assign to all VPC resource names | `string` | `"daos-example"` | no |
-| <a name="input_zone"></a> [zone](#input\_zone) | IBM Cloud Zone | `string` | `"us-south-3"` | no |
+| <a name="input_ibmcloud_timeout"></a> [ibmcloud\_timeout](#input\_ibmcloud\_timeout) | n/a | `number` | `900` | no |
+| <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix to assign to all resource names | `string` | `"daos-example"` | no |
+| <a name="input_region"></a> [region](#input\_region) | IBM Cloud Region where resources will be deployed | `string` | `"us-south"` | no |
+| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | n/a | `string` | `"Default"` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_public_gateway_id"></a> [public\_gateway\_id](#output\_public\_gateway\_id) | The ID of the public gateway |
-| <a name="output_public_gateway_name"></a> [public\_gateway\_name](#output\_public\_gateway\_name) | The name of the public gateway |
 | <a name="output_region"></a> [region](#output\_region) | IBM Cloud region |
-| <a name="output_subnet_name"></a> [subnet\_name](#output\_subnet\_name) | The name of the VPC subnet |
+| <a name="output_vpc_bastion_sg_name"></a> [vpc\_bastion\_sg\_name](#output\_vpc\_bastion\_sg\_name) | The name of the bastion security group |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | The ID of the VPC |
+| <a name="output_vpc_instance_sg_name"></a> [vpc\_instance\_sg\_name](#output\_vpc\_instance\_sg\_name) | The name of the instance security group |
 | <a name="output_vpc_name"></a> [vpc\_name](#output\_vpc\_name) | The name of the VPC |
-| <a name="output_zone"></a> [zone](#output\_zone) | IBM Cloud region |
+| <a name="output_vpc_subnet_names"></a> [vpc\_subnet\_names](#output\_vpc\_subnet\_names) | The names of the subnets in the VPC |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

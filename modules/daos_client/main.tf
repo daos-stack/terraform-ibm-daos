@@ -20,72 +20,55 @@ provider "ibm" {
 }
 
 locals {
+  first_client = format("%s-%03s", var.instance_base_name, 1)
+  clients      = var.instance_count == 1 ? local.first_client : format("%s-[%03s-%03s]", var.instance_base_name, 1, var.instance_count)
+
   ssh_key_ids = [
     for ssh_key in data.ibm_is_ssh_key.ssh_keys : {
       id = ssh_key.id
     }
   ]
 
+  security_group_ids = [
+    for sg in data.ibm_is_security_group.client : {
+      id = sg.id
+    }
+  ]
+
   user_data_script = templatefile("${path.module}/templates/user_data.sh.tftpl",
     {
-      playbooks = var.user_data_ansible_playbooks
+      ansible_install_script_url = var.ansible_install_script_url
+      ansible_playbooks          = var.ansible_playbooks
+      access_points              = var.daos_access_points
     }
   )
-
-  # first_client  = format("%s-%04s", var.instance_base_name, 1)
-  # clients       = var.instance_count == 1 ? local.first_client : format("%s-[%04s-%04s]", var.instance_base_name, 1, var.instance_count)
-  # max_aps       = var.instance_count > 5 ? 5 : (var.instance_count % 2) == 1 ? var.instance_count : var.instance_count - 1
-  # access_points = formatlist("%s-%04s", var.instance_base_name, range(1, local.max_aps + 1))
-
 }
 
-data "ibm_is_vpc" "daos_client_vpc" {
-  name = var.vpc_name
-}
-
-data "ibm_is_subnet" "daos_client_sn" {
-  name = var.subnet_name
-}
-
-data "ibm_is_image" "client_os_image" {
-  name = var.os_image_name
-}
-
-data "ibm_resource_group" "daos_rg" {
-  name = var.resource_group_name
-}
-
-data "ibm_is_ssh_key" "ssh_keys" {
-  for_each = toset(var.ssh_key_names)
-  name     = each.value
-}
-
-# This template format can be used with instance groups
-resource "ibm_is_instance_template" "daos_client_it" {
-  name    = "${var.instance_base_name}-it"
-  image   = data.ibm_is_image.client_os_image.id
-  profile = var.instance_profile_name
-
-  primary_network_interface {
-    name   = "eth0"
-    subnet = data.ibm_is_subnet.daos_client_sn.id
-    #security_groups = var.security_groups
-  }
-
-  vpc  = data.ibm_is_vpc.daos_client_vpc.id
-  zone = var.zone
-  keys = [for ssh_key in local.ssh_key_ids : ssh_key.id]
+resource "ibm_is_instance_template" "daos_client" {
+  name      = "${var.instance_base_name}-it"
+  image     = data.ibm_is_image.client_os_image.id
+  keys      = [for ssh_key in local.ssh_key_ids : ssh_key.id]
+  profile   = var.instance_profile_name
+  user_data = local.user_data_script
+  vpc       = data.ibm_is_vpc.daos_client_vpc.id
+  zone      = var.zone
 
   metadata_service_enabled = true
-  user_data                = local.user_data_script
 
+  primary_network_interface {
+    name            = "eth0"
+    subnet          = data.ibm_is_subnet.daos_client_sn.id
+    security_groups = [for sg in data.ibm_is_security_group.client : sg.id]
+  }
 }
 
-#-------------------------------------------------------------------------------
-# Single instance resource with a count
-#-------------------------------------------------------------------------------
 resource "ibm_is_instance" "daos_client" {
-  count             = var.instance_count
-  name              = format("%s-%04s", var.instance_base_name, "${count.index + 1}")
-  instance_template = ibm_is_instance_template.daos_client_it.id
+  count = var.instance_count
+  name  = format("%s-%03s", var.instance_base_name, "${count.index + 1}")
+
+  instance_template = ibm_is_instance_template.daos_client.id
+
+  boot_volume {
+    name = format("%s-%03s-bv", var.instance_base_name, "${count.index + 1}")
+  }
 }

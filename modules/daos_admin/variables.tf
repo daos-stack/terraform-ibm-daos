@@ -79,38 +79,48 @@ variable "ssh_key_names" {
   default     = []
 }
 
-variable "security_groups" {
-  description = "List of security groups to attach to add to DAOS admin instances"
+variable "security_group_names" {
+  description = "Names of security groups for DAOS admin instances"
   type        = list(string)
-  default     = []
 }
 
-variable "user_data_ansible_playbooks" {
-  description = "List of Ansible playbooks to be run in user_data script"
+variable "ansible_install_script_url" {
+  description = "URL for script that installs Ansible"
+  type        = string
+  default     = "https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/main/install_ansible.sh"
+}
+
+# List of Ansible playbooks that exist within collections.
+# Playbooks will run in the order specified.
+variable "ansible_playbooks" {
+  description = "Ansible information to be used in a template that generates a user_data script"
   type = list(object({
-    repo_name             = string
-    repo_url              = string
-    playbook_dir          = string
-    playbook_file         = string
-    repo_url              = string
-    ansible_playbook_args = list(string)
-    extra_vars            = list(string)
+    venv_dir           = string
+    collection_fqn     = string
+    collection_git_url = string
+    playbook_fqn       = string
   }))
   default = [
     {
-      repo_name     = "maodevops/ansible-collection-daos"
-      repo_url      = "https://github.com/markaolson/ansible-collection-daos.git"
-      playbook_dir  = "playbooks"
-      playbook_file = "daos.yaml"
-      ansible_playbook_args = [
-        "-c local",
-        "-i '127.0.0.1,'",
-        "-u root"
-      ]
-      extra_vars = [
-        "daos_roles=['admin']",
-        "daos_version='2.2.0'"
-      ]
+      venv_dir           = "/usr/local/ansible-collection-daos/venv"
+      collection_fqn     = "daos_stack.daos"
+      collection_git_url = "git+https://github.com/daos-stack/ansible-collection-daos.git,main"
+      playbook_fqn       = "daos_stack.daos.daos_install"
     }
   ]
+}
+
+variable "daos_access_points" {
+  description = "List of DAOS access points. This value should be provided by the daos_server module output."
+  type        = list(string)
+}
+
+variable "daos_server_names" {
+  description = "List of DAOS server host names. This value should be provided by the daos_server module output."
+  type        = list(string)
+}
+
+variable "daos_client_names" {
+  description = "List of DAOS client host names. This value should be provided by the daos_server module output."
+  type        = list(string)
 }

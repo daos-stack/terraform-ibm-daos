@@ -43,11 +43,12 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [ibm_is_floating_ip.daos_admin_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_floating_ip) | resource |
+| [ibm_is_floating_ip.daos_admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_floating_ip) | resource |
 | [ibm_is_instance.daos_admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_instance) | resource |
-| [ibm_is_instance_template.daos_admin_it](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_instance_template) | resource |
+| [ibm_is_instance_template.daos_admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_instance_template) | resource |
 | [ibm_is_image.admin_os_image](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_image) | data source |
-| [ibm_is_security_groups.vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_security_groups) | data source |
+| [ibm_is_security_group.admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_security_group) | data source |
+| [ibm_is_security_groups.admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_security_groups) | data source |
 | [ibm_is_ssh_key.ssh_keys](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_ssh_key) | data source |
 | [ibm_is_subnet.daos_admin_sn](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_subnet) | data source |
 | [ibm_is_vpc.daos_admin_vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_vpc) | data source |
@@ -57,6 +58,11 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_ansible_install_script_url"></a> [ansible\_install\_script\_url](#input\_ansible\_install\_script\_url) | URL for script that installs Ansible | `string` | `"https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/main/install_ansible.sh"` | no |
+| <a name="input_ansible_playbooks"></a> [ansible\_playbooks](#input\_ansible\_playbooks) | Ansible information to be used in a template that generates a user\_data script | <pre>list(object({<br>    venv_dir           = string<br>    collection_fqn     = string<br>    collection_git_url = string<br>    playbook_fqn       = string<br>  }))</pre> | <pre>[<br>  {<br>    "collection_fqn": "daos_stack.daos",<br>    "collection_git_url": "git+https://github.com/daos-stack/ansible-collection-daos.git,main",<br>    "playbook_fqn": "daos_stack.daos.daos_install",<br>    "venv_dir": "/usr/local/ansible-collection-daos/venv"<br>  }<br>]</pre> | no |
+| <a name="input_daos_access_points"></a> [daos\_access\_points](#input\_daos\_access\_points) | List of DAOS access points. This value should be provided by the daos\_server module output. | `list(string)` | n/a | yes |
+| <a name="input_daos_client_names"></a> [daos\_client\_names](#input\_daos\_client\_names) | List of DAOS client host names. This value should be provided by the daos\_server module output. | `list(string)` | n/a | yes |
+| <a name="input_daos_server_names"></a> [daos\_server\_names](#input\_daos\_server\_names) | List of DAOS server host names. This value should be provided by the daos\_server module output. | `list(string)` | n/a | yes |
 | <a name="input_ibmcloud_api_key"></a> [ibmcloud\_api\_key](#input\_ibmcloud\_api\_key) | IBM Cloud API Key | `string` | n/a | yes |
 | <a name="input_instance_base_name"></a> [instance\_base\_name](#input\_instance\_base\_name) | Prefix to assign to all instances | `string` | `"daos-admin"` | no |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | Number of DAOS admin instances to deploy | `number` | `1` | no |
@@ -64,10 +70,9 @@ No modules.
 | <a name="input_os_image_name"></a> [os\_image\_name](#input\_os\_image\_name) | Name of disk image to use for DAOS admin instances | `string` | `"ibm-rocky-linux-8-6-minimal-amd64-2"` | no |
 | <a name="input_region"></a> [region](#input\_region) | IBM Cloud Region | `string` | `"us-south"` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Resource group name of resource group for  DAOS admin instances | `string` | `"Default"` | no |
-| <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | List of security groups to attach to add to DAOS admin instances | `list(string)` | `[]` | no |
+| <a name="input_security_group_names"></a> [security\_group\_names](#input\_security\_group\_names) | Names of security groups for DAOS admin instances | `list(string)` | n/a | yes |
 | <a name="input_ssh_key_names"></a> [ssh\_key\_names](#input\_ssh\_key\_names) | List of SSH key names to add to DAOS admin instances | `list(string)` | `[]` | no |
 | <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | Name of the VPC subnet | `string` | `null` | no |
-| <a name="input_user_data_ansible_playbooks"></a> [user\_data\_ansible\_playbooks](#input\_user\_data\_ansible\_playbooks) | List of Ansible playbooks to be run in user\_data script | <pre>list(object({<br>    repo_name             = string<br>    repo_url              = string<br>    playbook_dir          = string<br>    playbook_file         = string<br>    repo_url              = string<br>    ansible_playbook_args = list(string)<br>    extra_vars            = list(string)<br>  }))</pre> | <pre>[<br>  {<br>    "ansible_playbook_args": [<br>      "-c local",<br>      "-i '127.0.0.1,'",<br>      "-u root"<br>    ],<br>    "extra_vars": [<br>      "daos_roles=['admin']",<br>      "daos_version='2.2.0'"<br>    ],<br>    "playbook_dir": "playbooks",<br>    "playbook_file": "daos.yaml",<br>    "repo_name": "maodevops/ansible-collection-daos",<br>    "repo_url": "https://github.com/markaolson/ansible-collection-daos.git"<br>  }<br>]</pre> | no |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name of the VPC | `string` | `null` | no |
 | <a name="input_zone"></a> [zone](#input\_zone) | IBM Cloud Zone | `string` | `"us-south-3"` | no |
 
@@ -75,15 +80,15 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_admin_security_groups"></a> [admin\_security\_groups](#output\_admin\_security\_groups) | n/a |
 | <a name="output_floating_ip"></a> [floating\_ip](#output\_floating\_ip) | DAOS Admin instance floating IP |
 | <a name="output_instance_base_name"></a> [instance\_base\_name](#output\_instance\_base\_name) | n/a |
 | <a name="output_instance_profile_name"></a> [instance\_profile\_name](#output\_instance\_profile\_name) | n/a |
 | <a name="output_os_image_name"></a> [os\_image\_name](#output\_os\_image\_name) | n/a |
 | <a name="output_region"></a> [region](#output\_region) | IBM Cloud region |
-| <a name="output_security_groups"></a> [security\_groups](#output\_security\_groups) | List of Security Groups attached to the DAOS Admin instance |
+| <a name="output_security_group_names"></a> [security\_group\_names](#output\_security\_group\_names) | List of Security Groups attached to the DAOS admin instance |
 | <a name="output_ssh_key_names"></a> [ssh\_key\_names](#output\_ssh\_key\_names) | Names of SSH keys attached to DAOS Admin instance |
 | <a name="output_subnet_name"></a> [subnet\_name](#output\_subnet\_name) | Name of the subnet for the DAOS Admin instance |
-| <a name="output_user_data_script"></a> [user\_data\_script](#output\_user\_data\_script) | n/a |
 | <a name="output_vpc_name"></a> [vpc\_name](#output\_vpc\_name) | Name of VPC containing the DAOS Admin instance |
 | <a name="output_zone"></a> [zone](#output\_zone) | IBM Cloud region |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

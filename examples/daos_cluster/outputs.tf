@@ -34,9 +34,9 @@ output "subnet_name" {
   value       = var.subnet_name
 }
 
-output "cluster_prefix" {
+output "prefix" {
   description = ""
-  value       = var.cluster_prefix
+  value       = var.prefix
 }
 
 output "ssh_key_names" {
@@ -49,9 +49,9 @@ output "admin_instance_floating_ip_address" {
   value       = module.daos_admin.floating_ip.address
 }
 
-output "admin_user_data_script" {
+/* output "admin_user_data_script" {
   value = module.daos_admin.user_data_script
-}
+} */
 
 output "server_instance_count" {
   description = ""
@@ -63,12 +63,32 @@ output "server_instance_base_name" {
   value       = var.server_instance_base_name
 }
 
-output "server_instance_profile_name" {
-  description = ""
-  value       = var.server_instance_profile_name
+output "admin_security_group_names" {
+  description = "List of Security Groups attached to the DAOS admin instance"
+  value       = module.daos_admin.security_group_names
 }
 
-output "server_os_image_name" {
-  description = ""
-  value       = var.server_os_image_name
+output "admin_security_groups" {
+  description = "List of Security Groups attached to the DAOS admin instance"
+  value       = module.daos_admin.admin_security_groups
+}
+
+output "daos_server_access_points" {
+  description = "List of DAOS access points"
+  value       = module.daos_server.daos_access_points
+}
+
+output "daos_server_access_point_ips" {
+  description = "List of DAOS access point IPs"
+  value       = module.daos_server.daos_access_point_ips
+}
+
+output "daos_server_names" {
+  description = "List of DAOS server instance names"
+  value       = module.daos_server.daos_server_names
+}
+
+output "daos_client_names" {
+  description = "List of DAOS client instance names"
+  value       = module.daos_client.daos_client_names
 }

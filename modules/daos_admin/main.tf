@@ -28,72 +28,59 @@ locals {
   ]
 
   security_group_ids = [
-    for ssh_key in data.ibm_is_ssh_key.ssh_keys : {
-      id = ssh_key.id
+    for sg in data.ibm_is_security_group.admin : {
+      id = sg.id
     }
   ]
 
   user_data_script = templatefile("${path.module}/templates/user_data.sh.tftpl",
     {
-      playbooks = var.user_data_ansible_playbooks
+      ansible_install_script_url = var.ansible_install_script_url
+      ansible_playbooks          = var.ansible_playbooks
+      access_points              = var.daos_access_points
     }
   )
 
 }
 
-data "ibm_is_vpc" "daos_admin_vpc" {
-  name = var.vpc_name
-}
-
-data "ibm_is_subnet" "daos_admin_sn" {
-  name = var.subnet_name
-}
-
-data "ibm_is_image" "admin_os_image" {
-  name = var.os_image_name
-}
-
-data "ibm_resource_group" "daos_rg" {
-  name = var.resource_group_name
-}
-
-data "ibm_is_ssh_key" "ssh_keys" {
-  for_each = toset(var.ssh_key_names)
-  name     = each.value
-}
-
-# All security groups in the VPC
-data "ibm_is_security_groups" "vpc" {
-  vpc_name = var.vpc_name
-}
 
 # This template format can be used with instance groups
-resource "ibm_is_instance_template" "daos_admin_it" {
-  name    = "${var.instance_base_name}-it"
-  image   = data.ibm_is_image.admin_os_image.id
-  profile = var.instance_profile_name
+resource "ibm_is_instance_template" "daos_admin" {
+  name      = "${var.instance_base_name}-it"
+  image     = data.ibm_is_image.admin_os_image.id
+  keys      = [for ssh_key in local.ssh_key_ids : ssh_key.id]
+  profile   = var.instance_profile_name
+  user_data = local.user_data_script
+  vpc       = data.ibm_is_vpc.daos_admin_vpc.id
+  zone      = var.zone
+
+  metadata_service_enabled = true
 
   primary_network_interface {
     name            = "eth0"
     subnet          = data.ibm_is_subnet.daos_admin_sn.id
-    security_groups = [for sg in data.ibm_is_security_groups.vpc.security_groups : sg.id]
+    security_groups = [for sg in data.ibm_is_security_group.admin : sg.id]
+    # security_groups = var.security_group_names
+    # security_groups = local.security_group_ids
+    # security_groups = data.ibm_is_security_group.admin
+    #security_groups = [data.ibm_is_security_group.admin]
+    #security_groups = ["${data.ibm_is_security_group.admin}"]
+    #security_groups = [data.ibm_is_security_group.admin]
+    #security_groups = toset(data.ibm_is_security_group.admin)
+    #security_groups = [ibm_is_security_group.bastion]
   }
-
-  vpc  = data.ibm_is_vpc.daos_admin_vpc.id
-  zone = var.zone
-  keys = [for ssh_key in local.ssh_key_ids : ssh_key.id]
-
-  metadata_service_enabled = true
-  user_data                = local.user_data_script
-
 }
 
 resource "ibm_is_instance" "daos_admin" {
-  name              = "${var.instance_base_name}-01"
-  instance_template = ibm_is_instance_template.daos_admin_it.id
+  name              = "${var.instance_base_name}-001"
+  instance_template = ibm_is_instance_template.daos_admin.id
+
+  boot_volume {
+    name = "${var.instance_base_name}-001-bv"
+  }
 }
 
-resource "ibm_is_floating_ip" "daos_admin_fip" {
+resource "ibm_is_floating_ip" "daos_admin" {
   name   = "${var.instance_base_name}-floating-ip"
   target = ibm_is_instance.daos_admin.primary_network_interface[0].id
 }

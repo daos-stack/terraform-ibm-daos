@@ -1,34 +1,79 @@
 #!/bin/bash
+#
+# user_data script for DAOS server instances
+#
 
-install_pkgs() {
-  dnf install -y curl wget git ansible-core
+ACD_DIR="$${ACD_DIR:-/opt/ansible-collection-daos}"
+ACD_VENV_DIR="$${ACD_DIR}/venv"
+ACD_VARS_FILE="$${ACD_DIR}/vars.yml"
+
+ANSIBLE_DEPRECATION_WARNINGS=False
+
+install_ansible() {
+  curl --no-sessionid -s ${ansible_install_script_url} | /bin/bash
 }
 
-install_collections() {
-  ansible-galaxy collection install --clear-response-cache --force-with-deps git+https://github.com/markaolson/ansible-collection-daos.git,develop
-  ansible-galaxy collection install --clear-response-cache --force-with-dep community.general
+activate_venv() {
+  if [[ -z $VIRTUAL_ENV ]]; then
+    source "$${ACD_VENV_DIR}/bin/activate"
+  fi
 }
 
-run_ansible_playbooks() {
-  ansible-playbook -c local -i '127.0.0.1,' --extra-vars="daos_roles=['admin']" markaolson.daos.daos_local
-  # TODO: Pull the DAOS collection from galaxy when it is published there
-  # %{for p in playbooks}
-  # git clone ${p.repo_url}
-  # cd $(basename ${p.repo_url} | sed 's/.git//')
-  # cd ${p.playbook_dir}
-  # ansible-playbook \
-  #   %{~ for a in p.ansible_playbook_args ~}
-  #   ${a} \
-  #   %{~ endfor ~}
-  #   --extra-vars="${~ join(" ", p.extra_vars) ~}"
-  #   ${p.playbook_file}
-  # %{ endfor }
+install_collection() {
+  local name="$1"
+  local url="$2"
+
+  if ! ansible-galaxy collection list | grep -q $${name}; then
+    echo "Installing Ansible Collection: $${name}"
+    ansible-galaxy collection install \
+      --clear-response-cache \
+      --force-with-deps \
+      "$${url}"
+  else
+    echo "Collection already installed: $${name}"
+  fi
+}
+
+# TODO: Have Terraform generate a vars file from a template.
+#       Need to figure out how to deploy the generated file.
+create_vars_file() {
+  cat > "$${ACD_VARS_FILE}" <<EOF
+tune_tuned_profile: daos-ibm
+tune_iommu_enable: false
+tune_nic_default_ipv4_mtu: 9000
+tune_nic_queues_auto_enabled: true
+tune_tuned_daos_profile:
+  main:
+    summary: Customized network-latency tuned profile for DAOS
+    include: network-latency
+  sysctl:
+    net.ipv4.tcp_rmem: 4096 87380 16777216
+    net.ipv4.tcp_wmem: 4096 65536 16777216
+
+daos_roles:
+  - admin
+
+daos_config_access_points: ${jsonencode(access_points)}
+
+EOF
+}
+
+run_playbooks() {
+%{ for ap in ansible_playbooks }
+  # Playbook: ${ap.playbook_fqn}"
+  install_collection "${ap.collection_fqn}" "${ap.collection_git_url}"
+
+  echo "Running playbook: ${ap.playbook_fqn}"
+  echo "ansible-playbook -c local -i '127.0.0.1,' -u root --extra-vars=\"@$${ACD_VARS_FILE}\" ${ap.playbook_fqn}"
+  ansible-playbook -c local -i '127.0.0.1,' -u root --extra-vars="@$${ACD_VARS_FILE}" ${ap.playbook_fqn}
+%{ endfor }
 }
 
 main() {
-  install_pkgs
-  install_collections
-  run_ansible_playbooks
+  install_ansible
+  activate_venv
+  create_vars_file
+  run_playbooks
 }
 
 main

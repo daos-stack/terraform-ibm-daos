@@ -47,6 +47,11 @@ repos:
     rev: 3.0.0
     hooks:
       - id: check-mailmap
-      - id: forbid-binary
       - id: git-check      # Configure in .gitattributes
       - id: shellcheck
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: end-of-file-fixer

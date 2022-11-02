@@ -10,6 +10,34 @@
       "required": false
     },
     {
+      "name": "admin_security_group_names",
+      "type": "list(string)",
+      "description": "List of security groups to attach to add to DAOS admin instances",
+      "default": [],
+      "required": false
+    },
+    {
+      "name": "ansible_install_script_url",
+      "type": "string",
+      "description": "URL for script that installs Ansible",
+      "default": "https://raw.githubusercontent.com/mark-olson/ansible-collection-daos/develop/install_ansible.sh",
+      "required": false
+    },
+    {
+      "name": "ansible_playbooks",
+      "type": "list(object({\n    venv_dir           = string\n    collection_fqn     = string\n    collection_git_url = string\n    playbook_fqn       = string\n  }))",
+      "description": "Ansible information to be used in a template that generates a user_data script",
+      "default": [
+        {
+          "collection_fqn": "mark_olson.daos",
+          "collection_git_url": "git+https://github.com/mark-olson/ansible-collection-daos.git,develop",
+          "playbook_fqn": "mark_olson.daos.daos_install",
+          "venv_dir": "/usr/local/ansible-collection-daos/venv"
+        }
+      ],
+      "required": false
+    },
+    {
       "name": "client_instance_base_name",
       "type": "string",
       "description": "DAOS client instance base name",
@@ -38,10 +66,10 @@
       "required": false
     },
     {
-      "name": "cluster_prefix",
-      "type": "string",
-      "description": "Prefix to assign to all VPC resource names",
-      "default": "daos-example",
+      "name": "client_security_group_names",
+      "type": "list(string)",
+      "description": "List of security group names to attach to add to DAOS client instances",
+      "default": [],
       "required": false
     },
     {
@@ -52,6 +80,13 @@
       "required": true
     },
     {
+      "name": "prefix",
+      "type": "string",
+      "description": "Prefix to assign to all VPC resource names",
+      "default": "daos-example",
+      "required": false
+    },
+    {
       "name": "region",
       "type": "string",
       "description": "IBM Cloud Region",
@@ -59,24 +94,17 @@
       "required": false
     },
     {
-      "name": "security_group_ssh_allowed_ips",
-      "type": "list(object({\n    region        = string\n    cidr          = string\n    first_ipv4_ip = string\n    last_ipv4_ip  = string\n  }))",
-      "description": "Map of corporate proxies for ingress rules in Security Groups",
-      "default": [
-        {
-          "cidr": "0.0.0.0/0",
-          "first_ipv4_ip": "0.0.0.0",
-          "last_ipv4_ip": "0.0.0.0",
-          "region": "ANY"
-        }
-      ],
+      "name": "server_enable_bare_metal",
+      "type": "bool",
+      "description": "Use bare metal instances instead of VMs",
+      "default": true,
       "required": false
     },
     {
-      "name": "security_groups",
-      "type": "list(string)",
-      "description": "List of security groups to attach to add to DAOS admin instances",
-      "default": [],
+      "name": "server_instance_bare_metal_profile_name",
+      "type": "string",
+      "description": "Name of the instance profile for DAOS server bare metal instances",
+      "default": "cx2-metal-96x192",
       "required": false
     },
     {
@@ -89,22 +117,22 @@
     {
       "name": "server_instance_count",
       "type": "number",
-      "description": "Number of DAOS instances to deploy",
-      "default": 1,
+      "description": "Number of DAOS Server instances to deploy on VMs",
+      "default": 0,
       "required": false
     },
     {
-      "name": "server_instance_profile_name",
+      "name": "server_os_image_name_vm",
       "type": "string",
-      "description": "Name of the instance profile to use for DAOS servers",
-      "default": "bx2d-metal-96x384",
-      "required": false
-    },
-    {
-      "name": "server_os_image_name",
-      "type": "string",
-      "description": "Name of disk image to use for DAOS servers",
+      "description": "Name of disk image to use for DAOS server VPC VM images",
       "default": "ibm-rocky-linux-8-6-minimal-amd64-2",
+      "required": false
+    },
+    {
+      "name": "server_security_group_names",
+      "type": "list(string)",
+      "description": "List of security group names to attach to add to DAOS server instances",
+      "default": [],
       "required": false
     },
     {
@@ -162,11 +190,31 @@
       "description": "DAOS Admin instance floating IP address"
     },
     {
-      "name": "admin_user_data_script",
-      "description": null
+      "name": "admin_security_group_names",
+      "description": "List of Security Groups attached to the DAOS admin instance"
     },
     {
-      "name": "cluster_prefix",
+      "name": "admin_security_groups",
+      "description": "List of Security Groups attached to the DAOS admin instance"
+    },
+    {
+      "name": "daos_client_names",
+      "description": "List of DAOS client instance names"
+    },
+    {
+      "name": "daos_server_access_point_ips",
+      "description": "List of DAOS access point IPs"
+    },
+    {
+      "name": "daos_server_access_points",
+      "description": "List of DAOS access points"
+    },
+    {
+      "name": "daos_server_names",
+      "description": "List of DAOS server instance names"
+    },
+    {
+      "name": "prefix",
       "description": null
     },
     {
@@ -179,14 +227,6 @@
     },
     {
       "name": "server_instance_count",
-      "description": null
-    },
-    {
-      "name": "server_instance_profile_name",
-      "description": null
-    },
-    {
-      "name": "server_os_image_name",
       "description": null
     },
     {

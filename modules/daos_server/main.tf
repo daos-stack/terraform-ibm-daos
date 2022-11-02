@@ -20,41 +20,28 @@ provider "ibm" {
 }
 
 locals {
+  first_server  = format("%s-%03s", var.instance_base_name, 1)
+  servers       = var.instance_count == 1 ? local.first_server : format("%s-[%03s-%03s]", var.instance_base_name, 1, var.instance_count)
+  max_aps       = var.instance_count > 5 ? 5 : (var.instance_count % 2) == 1 ? var.instance_count : var.instance_count - 1
+  access_points = formatlist("%s-%03s", var.instance_base_name, range(1, local.max_aps + 1))
+
   ssh_key_ids = [
     for ssh_key in data.ibm_is_ssh_key.ssh_keys : {
       id = ssh_key.id
     }
   ]
 
+  security_group_ids = [
+    for sg in data.ibm_is_security_group.server : [
+      sg.id
+    ]
+  ]
+
   user_data_script = templatefile("${path.module}/templates/user_data.sh.tftpl",
     {
-      playbooks = var.user_data_ansible_playbooks
+      ansible_install_script_url = var.ansible_install_script_url
+      ansible_playbooks          = var.ansible_playbooks
+      access_points              = local.access_points
     }
   )
-
-  # first_server  = format("%s-%04s", var.instance_base_name, 1)
-  # servers       = var.instance_count == 1 ? local.first_server : format("%s-[%04s-%04s]", var.instance_base_name, 1, var.instance_count)
-  # max_aps       = var.instance_count > 5 ? 5 : (var.instance_count % 2) == 1 ? var.instance_count : var.instance_count - 1
-  # access_points = formatlist("%s-%04s", var.instance_base_name, range(1, local.max_aps + 1))
-}
-
-data "ibm_is_vpc" "daos_server_vpc" {
-  name = var.vpc_name
-}
-
-data "ibm_is_subnet" "daos_server_sn" {
-  name = var.subnet_name
-}
-
-data "ibm_is_image" "server_os_image" {
-  name = var.os_image_name
-}
-
-data "ibm_resource_group" "daos_rg" {
-  name = var.resource_group_name
-}
-
-data "ibm_is_ssh_key" "ssh_keys" {
-  for_each = toset(var.ssh_key_names)
-  name     = each.value
 }

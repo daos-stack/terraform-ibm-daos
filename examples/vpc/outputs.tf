@@ -19,32 +19,32 @@ output "region" {
   value       = var.region
 }
 
-output "zone" {
+/* output "zone" {
   description = "IBM Cloud region"
   value       = var.zone
-}
+} */
 
 output "vpc_id" {
   description = "The ID of the VPC"
-  value       = ibm_is_vpc.example_vpc.id
+  value       = ibm_is_vpc.example.id
 }
 
 output "vpc_name" {
   description = "The name of the VPC"
-  value       = ibm_is_vpc.example_vpc.name
+  value       = ibm_is_vpc.example.name
 }
 
-output "subnet_name" {
-  description = "The name of the VPC subnet"
-  value       = ibm_is_subnet.example_sn.name
+output "vpc_subnet_names" {
+  description = "The names of the subnets in the VPC"
+  value       = ibm_is_subnet.subnet[*].name
 }
 
-output "public_gateway_id" {
-  description = "The ID of the public gateway"
-  value       = ibm_is_public_gateway.example_gw.id
+output "vpc_bastion_sg_name" {
+  description = "The name of the bastion security group"
+  value       = ibm_is_security_group.bastion.name
 }
 
-output "public_gateway_name" {
-  description = "The name of the public gateway"
-  value       = ibm_is_public_gateway.example_gw.name
+output "vpc_instance_sg_name" {
+  description = "The name of the instance security group"
+  value       = ibm_is_security_group.instance.name
 }

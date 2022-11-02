@@ -19,25 +19,31 @@ provider "ibm" {
   region           = var.region
 }
 
-module "daos_admin" {
-  source             = "../../modules/daos_admin"
-  ibmcloud_api_key   = var.ibmcloud_api_key
-  instance_base_name = var.admin_instance_base_name
-  security_groups    = var.security_groups
-  ssh_key_names      = var.ssh_key_names
-  subnet_name        = var.subnet_name
-  vpc_name           = var.vpc_name
-}
+# TODO: Need to call daos_common module here to create a COS bucket that
+#       will be used for shared files between the DAOS server, client and
+#       admin instances. Also need to use Secrets Manager to store the
+#       certificates for secure transport.
+
 
 module "daos_server" {
-  source                = "../../modules/daos_server"
-  ibmcloud_api_key      = var.ibmcloud_api_key
-  instance_base_name    = var.server_instance_base_name
-  instance_count        = var.server_instance_count
-  instance_profile_name = var.server_instance_profile_name
-  ssh_key_names         = var.ssh_key_names
-  subnet_name           = var.subnet_name
-  vpc_name              = var.vpc_name
+  source               = "../../modules/daos_server"
+  ibmcloud_api_key     = var.ibmcloud_api_key
+  instance_base_name   = var.server_instance_base_name
+  instance_count       = var.server_instance_count
+  ssh_key_names        = var.ssh_key_names
+  subnet_name          = var.subnet_name
+  vpc_name             = var.vpc_name
+  enable_bare_metal    = var.server_enable_bare_metal
+  security_group_names = var.server_security_group_names
+
+  instance_bare_metal_profile_name = var.server_instance_bare_metal_profile_name
+
+  # TODO: Remove these overrides when
+  #       https://github.com/daos-stack/ansible-collection-daos.git,main
+  #       is available. Removing these fall back to the default variable values
+  #       in the daos_server module.
+  ansible_install_script_url = var.ansible_install_script_url
+  ansible_playbooks          = var.ansible_playbooks
 }
 
 module "daos_client" {
@@ -49,4 +55,33 @@ module "daos_client" {
   ssh_key_names         = var.ssh_key_names
   subnet_name           = var.subnet_name
   vpc_name              = var.vpc_name
+  security_group_names  = var.client_security_group_names
+  daos_access_points    = module.daos_server.daos_access_point_ips
+
+  # TODO: Remove these overrides when
+  #       https://github.com/daos-stack/ansible-collection-daos.git,main
+  #       is available. Removing these fall back to the default variable values
+  #       in the daos_client module.
+  ansible_install_script_url = var.ansible_install_script_url
+  ansible_playbooks          = var.ansible_playbooks
+}
+
+module "daos_admin" {
+  source               = "../../modules/daos_admin"
+  ibmcloud_api_key     = var.ibmcloud_api_key
+  instance_base_name   = var.admin_instance_base_name
+  ssh_key_names        = var.ssh_key_names
+  subnet_name          = var.subnet_name
+  vpc_name             = var.vpc_name
+  security_group_names = var.admin_security_group_names
+  daos_access_points   = module.daos_server.daos_access_point_ips
+  daos_client_names    = module.daos_client.daos_client_names
+  daos_server_names    = module.daos_server.daos_server_names
+
+  # TODO: Remove these overrides when
+  #       https://github.com/daos-stack/ansible-collection-daos.git,main
+  #       is available. Removing these fall back to the default variable values
+  #       in the daos_admin module.
+  ansible_install_script_url = var.ansible_install_script_url
+  ansible_playbooks          = var.ansible_playbooks
 }

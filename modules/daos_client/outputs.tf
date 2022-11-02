@@ -64,11 +64,16 @@ output "ssh_key_names" {
   value       = var.ssh_key_names
 }
 
-# output "security_groups" {
-#   description = "List of security groups attached to DAOS client instances"
-#   value = var.security_groups
-# }
+/* output "security_groups" {
+  description = "List of Security Groups attached to the DAOS client instance"
+  value       = [for sg in data.ibm_is_security_group.client[*] : sg.name]
+} */
 
-output "user_data_script" {
+/* output "user_data_script" {
   value = local.user_data_script
+} */
+
+output "daos_client_names" {
+  description = "List of DAOS client names"
+  value       = ibm_is_instance.daos_client.*.name
 }

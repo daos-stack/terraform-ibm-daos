@@ -64,11 +64,42 @@ output "ssh_key_names" {
   value       = var.ssh_key_names
 }
 
-# output "security_groups" {
-#   description = "List of security groups attached to DAOS server instances"
-#   value = var.security_groups
-# }
+/* output "security_groups" {
+  description = "List of Security Groups attached to the DAOS server instance"
+  value       = [for sg in data.ibm_is_security_group.server[*] : sg.name]
+} */
 
-output "user_data_script" {
+/* output "user_data_script" {
   value = local.user_data_script
+} */
+
+output "enable_bare_metal" {
+  description = "Boolean which indicates if DAOS servers use bare_metal or not."
+  value       = var.enable_bare_metal
+}
+
+output "daos_access_points" {
+  description = "List of DAOS server instances that should be specified in the access_points setting in DAOS .yml config files"
+  value       = local.access_points
+}
+
+output "daos_access_point_ips" {
+  description = "List of DAOS server instance IPs that should be specified in the access_points setting in DAOS .yml config files"
+  value       = local.access_points
+}
+
+output "daos_access_points_bm" {
+  description = "List of DAOS server instances that should be specified in the access_points setting in DAOS .yml config files"
+  value       = local.access_points
+}
+
+output "daos_access_points_ips_bm" {
+  description = "List of DAOS server instance IPs that should be specified in the access_points setting in DAOS .yml config files"
+  value       = ibm_is_bare_metal_server.daos_server[*].network_interfaces.*.primary_ip
+  #value = [for bm in ibm_is_bare_metal_server.daos_server: bm.network_interfaces.*.primary_ip ]
+}
+
+output "daos_server_names" {
+  description = "List of DAOS server names"
+  value       = var.enable_bare_metal ? ibm_is_bare_metal_server.daos_server.*.name : ibm_is_instance.daos_server.*.name
 }

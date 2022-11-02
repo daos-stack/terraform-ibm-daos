@@ -24,12 +24,34 @@ Repository structure
 └── variables.tf          - Variables for the main module
 ```
 
-## Warning
+## Warning!
 
-The Terraform modules and examples in this repo are currently in the very
-early development stage.
+The Terraform modules and examples in this repo are in a very early development stage.
 
-The content in this repo should not be used for Production environments or demos.
+The content in this repo should not be used for production environments.
+
+## Deploying a DAOS Cluster on IBM Cloud
+
+The [examples](examples/) directory contains two example Terraform configurations that can be used to deploy a DAOS Cluster on IBM Cloud.
+
+1. [examples/vpc](examples/vpc/README.md) can be used to create a VPC if you do not already have one.
+2. [examples/daos_cluster](examples/daos_cluster/README.md) can be used to deploy a DAOS cluster in your VPC.
+
+### VPC setup
+
+Before you can deploy a DAOS cluster using the [examples/daos_cluster](examples/daos_cluster/README.md) example you first need to create a VPC.
+
+It is recommended that you create a VPC specifically for your DAOS deployment. If you have multiple team members using a single cloud account, each team member can create their own VPC.
+
+See [examples/vpc/README.md](examples/vpc/README.md) for instructions.
+
+### Deploying the daos_cluster example
+
+After you have created a VPC you may deploy a DAOS cluster using the [examples/daos_cluster](examples/daos_cluster/README.md) example
+
+The [examples/daos_cluster](examples/daos_cluster) directory contains a Terraform configuration that demonstrates how to use the Terraform modules in [modules](modules/) to deploy a DAOS cluster.
+
+See [examples/daos_cluster/README.md](examples/daos_cluster/README.md)
 
 ## Development
 

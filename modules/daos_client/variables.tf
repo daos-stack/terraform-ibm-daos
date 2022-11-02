@@ -79,50 +79,38 @@ variable "ssh_key_names" {
   default     = []
 }
 
-# TODO: Determine if we need this or not.
-#       Since we use the daos-admin-01 instance as our bastion
-#       we only need the network ACLs to allow traffic between
-#       all of the DAOS instances. We don't need to add security
-#       groups to servers and clients because we won't access
-#       them directly. We will always access them from the
-#       admin node (bastion).
-# variable "security_groups" {
-#   description = "List of security groups to attach to DAOS client instances"
-#   type        = list(string)
-#   default     = []
-# }
+variable "security_group_names" {
+  description = "Names of security groups for DAOS client instances"
+  type        = list(string)
+}
 
-variable "user_data_ansible_playbooks" {
-  description = "List of Ansible playbooks to be run in user_data script"
+variable "ansible_install_script_url" {
+  description = "URL for script that installs Ansible"
+  type        = string
+  default     = "https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/main/install_ansible.sh"
+}
+
+# List of Ansible playbooks that exist within collections.
+# Playbooks will run in the order specified.
+variable "ansible_playbooks" {
+  description = "Ansible information to be used in a template that generates a user_data script"
   type = list(object({
-    repo_name             = string
-    repo_url              = string
-    playbook_dir          = string
-    playbook_file         = string
-    repo_url              = string
-    ansible_playbook_args = list(string)
-    extra_vars            = list(string)
+    venv_dir           = string
+    collection_fqn     = string
+    collection_git_url = string
+    playbook_fqn       = string
   }))
   default = [
     {
-      repo_name     = "maodevops/ansible-collection-daos"
-      repo_url      = "https://github.com/markaolson/ansible-collection-daos.git"
-      playbook_dir  = "playbooks"
-      playbook_file = "daos.yaml"
-      ansible_playbook_args = [
-        "-c local",
-        "-i '127.0.0.1,'",
-        "-u root"
-      ]
-      extra_vars = [
-        "daos_roles=['admin']",
-        "daos_version='2.2.0'"
-      ]
+      venv_dir           = "/usr/local/ansible-collection-daos/venv"
+      collection_fqn     = "daos_stack.daos"
+      collection_git_url = "git+https://github.com/daos-stack/ansible-collection-daos.git,main"
+      playbook_fqn       = "daos_stack.daos.daos_install"
     }
   ]
 }
 
-
-#
-# DELETE -----------------------------------------------------------------
-#
+variable "daos_access_points" {
+  description = "List of DAOS access points. This value should be provided by the daos_server module output."
+  type        = list(string)
+}

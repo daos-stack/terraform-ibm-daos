@@ -3,6 +3,18 @@
   "footer": "",
   "inputs": [
     {
+      "name": "bastion_sg_ssh_allowed_ips",
+      "type": "list(object({\n    name = string\n    cidr = string\n  }))",
+      "description": "Corporate proxies for ingress rules in Security Groups",
+      "default": [
+        {
+          "cidr": "0.0.0.0/0",
+          "name": "ANY"
+        }
+      ],
+      "required": false
+    },
+    {
       "name": "ibmcloud_api_key",
       "type": "string",
       "description": "IBM Cloud API Key",
@@ -10,83 +22,59 @@
       "required": true
     },
     {
-      "name": "ipv4_cidr_block",
+      "name": "ibmcloud_timeout",
+      "type": "number",
+      "description": null,
+      "default": 900,
+      "required": false
+    },
+    {
+      "name": "prefix",
       "type": "string",
-      "description": "The IPv4 range of the subnet",
-      "default": "10.1.1.0/24",
+      "description": "Prefix to assign to all resource names",
+      "default": "daos-example",
       "required": false
     },
     {
       "name": "region",
       "type": "string",
-      "description": "IBM Cloud Region",
+      "description": "IBM Cloud Region where resources will be deployed",
       "default": "us-south",
       "required": false
     },
     {
-      "name": "security_group_ssh_allowed_ips",
-      "type": "list(object({\n    name          = string\n    cidr          = string\n    first_ipv4_ip = string\n    last_ipv4_ip  = string\n  }))",
-      "description": "Corporate proxies for ingress rules in Security Groups",
-      "default": [
-        {
-          "cidr": "0.0.0.0/0",
-          "first_ipv4_ip": "0.0.0.0",
-          "last_ipv4_ip": "0.0.0.0",
-          "name": "ANY"
-        },
-        {
-          "cidr": "10.1.0.0/16",
-          "first_ipv4_ip": "10.1.1.1",
-          "last_ipv4_ip": "10.1.255.255",
-          "name": "VPC"
-        }
-      ],
-      "required": false
-    },
-    {
-      "name": "vpc_prefix",
+      "name": "resource_group",
       "type": "string",
-      "description": "Prefix to assign to all VPC resource names",
-      "default": "daos-example",
-      "required": false
-    },
-    {
-      "name": "zone",
-      "type": "string",
-      "description": "IBM Cloud Zone",
-      "default": "us-south-3",
+      "description": null,
+      "default": "Default",
       "required": false
     }
   ],
   "modules": [],
   "outputs": [
     {
-      "name": "public_gateway_id",
-      "description": "The ID of the public gateway"
-    },
-    {
-      "name": "public_gateway_name",
-      "description": "The name of the public gateway"
-    },
-    {
       "name": "region",
       "description": "IBM Cloud region"
     },
     {
-      "name": "subnet_name",
-      "description": "The name of the VPC subnet"
+      "name": "vpc_bastion_sg_name",
+      "description": "The name of the bastion security group"
     },
     {
       "name": "vpc_id",
       "description": "The ID of the VPC"
     },
     {
+      "name": "vpc_instance_sg_name",
+      "description": "The name of the instance security group"
+    },
+    {
       "name": "vpc_name",
       "description": "The name of the VPC"
     },
     {
-      "name": "zone",
-      "description": "IBM Cloud region"
+      "name": "vpc_subnet_names",
+      "description": "The names of the subnets in the VPC"
     }
   ],
   "providers": [
@@ -105,7 +93,7 @@
   "resources": [
     {
       "type": "is_network_acl",
-      "name": "example_acl",
+      "name": "example",
       "provider": "ibm",
       "source": "IBM-Cloud/ibm",
       "mode": "managed",
@@ -114,7 +102,7 @@
     },
     {
       "type": "is_public_gateway",
-      "name": "example_gw",
+      "name": "example",
       "provider": "ibm",
       "source": "IBM-Cloud/ibm",
       "mode": "managed",
@@ -123,7 +111,16 @@
     },
     {
       "type": "is_security_group",
-      "name": "example_sg",
+      "name": "bastion",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "managed",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "is_security_group",
+      "name": "instance",
       "provider": "ibm",
       "source": "IBM-Cloud/ibm",
       "mode": "managed",
@@ -132,16 +129,34 @@
     },
     {
       "type": "is_security_group_rule",
-      "name": "example_egr_all",
+      "name": "bastion_egress_all",
       "provider": "ibm",
       "source": "IBM-Cloud/ibm",
       "mode": "managed",
       "version": "1.46.0",
-      "description": "Have to enable the outbound traffic here. Default is off"
+      "description": null
     },
     {
       "type": "is_security_group_rule",
-      "name": "example_sgr_tcp_all",
+      "name": "bastion_ingress_ssh",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "managed",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "is_security_group_rule",
+      "name": "instance_egress",
+      "provider": "ibm",
+      "source": "IBM-Cloud/ibm",
+      "mode": "managed",
+      "version": "1.46.0",
+      "description": null
+    },
+    {
+      "type": "is_security_group_rule",
+      "name": "instance_ingress",
       "provider": "ibm",
       "source": "IBM-Cloud/ibm",
       "mode": "managed",
@@ -150,7 +165,7 @@
     },
     {
       "type": "is_subnet",
-      "name": "example_sn",
+      "name": "subnet",
       "provider": "ibm",
       "source": "IBM-Cloud/ibm",
       "mode": "managed",
@@ -159,15 +174,6 @@
     },
     {
       "type": "is_vpc",
-      "name": "example_vpc",
-      "provider": "ibm",
-      "source": "IBM-Cloud/ibm",
-      "mode": "managed",
-      "version": "1.46.0",
-      "description": null
-    },
-    {
-      "type": "is_vpc_address_prefix",
       "name": "example",
       "provider": "ibm",
       "source": "IBM-Cloud/ibm",
@@ -185,8 +191,8 @@
       "description": null
     },
     {
-      "type": "is_zone",
-      "name": "zone",
+      "type": "is_zones",
+      "name": "regional_zones",
       "provider": "ibm",
       "source": "IBM-Cloud/ibm",
       "mode": "data",
@@ -195,7 +201,7 @@
     },
     {
       "type": "resource_group",
-      "name": "example_rg",
+      "name": "example",
       "provider": "ibm",
       "source": "IBM-Cloud/ibm",
       "mode": "data",

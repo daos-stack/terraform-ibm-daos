@@ -56,14 +56,23 @@ output "os_image_name" {
 
 output "floating_ip" {
   description = "DAOS Admin instance floating IP"
-  value       = ibm_is_floating_ip.daos_admin_fip
+  value       = ibm_is_floating_ip.daos_admin
 }
 
-output "security_groups" {
-  description = "List of Security Groups attached to the DAOS Admin instance"
-  value       = [for sg in data.ibm_is_security_groups.vpc.security_groups : sg.name]
+output "security_group_names" {
+  description = "List of Security Groups attached to the DAOS admin instance"
+  value       = var.security_group_names
 }
 
+/* output "security_groups" {
+  description = "List of Security Groups attached to the DAOS admin instance"
+  value       = [for sg in data.ibm_is_security_group.admin[*] : sg.name]
+} */
+/*
 output "user_data_script" {
   value = local.user_data_script
+}*/
+
+output "admin_security_groups" {
+  value = data.ibm_is_security_group.admin
 }
