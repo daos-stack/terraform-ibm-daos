@@ -46,13 +46,13 @@ No modules.
 | [ibm_is_floating_ip.daos_admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_floating_ip) | resource |
 | [ibm_is_instance.daos_admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_instance) | resource |
 | [ibm_is_instance_template.daos_admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_instance_template) | resource |
-| [ibm_is_image.admin_os_image](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_image) | data source |
-| [ibm_is_security_group.admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_security_group) | data source |
-| [ibm_is_security_groups.admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_security_groups) | data source |
+| [ibm_is_image.daos_admin_os_image](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_image) | data source |
+| [ibm_is_security_group.daos_admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_security_group) | data source |
+| [ibm_is_security_groups.daos_admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_security_groups) | data source |
 | [ibm_is_ssh_key.ssh_keys](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_ssh_key) | data source |
-| [ibm_is_subnet.daos_admin_sn](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_subnet) | data source |
-| [ibm_is_vpc.daos_admin_vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_vpc) | data source |
-| [ibm_resource_group.daos_rg](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/resource_group) | data source |
+| [ibm_is_subnet.daos_admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_subnet) | data source |
+| [ibm_is_vpc.daos_admin](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_vpc) | data source |
+| [ibm_resource_group.daos](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/resource_group) | data source |
 
 ## Inputs
 
@@ -63,8 +63,7 @@ No modules.
 | <a name="input_daos_access_points"></a> [daos\_access\_points](#input\_daos\_access\_points) | List of DAOS access points. This value should be provided by the daos\_server module output. | `list(string)` | n/a | yes |
 | <a name="input_daos_client_names"></a> [daos\_client\_names](#input\_daos\_client\_names) | List of DAOS client host names. This value should be provided by the daos\_server module output. | `list(string)` | n/a | yes |
 | <a name="input_daos_server_names"></a> [daos\_server\_names](#input\_daos\_server\_names) | List of DAOS server host names. This value should be provided by the daos\_server module output. | `list(string)` | n/a | yes |
-| <a name="input_ibmcloud_api_key"></a> [ibmcloud\_api\_key](#input\_ibmcloud\_api\_key) | IBM Cloud API Key | `string` | n/a | yes |
-| <a name="input_instance_base_name"></a> [instance\_base\_name](#input\_instance\_base\_name) | Prefix to assign to all instances | `string` | `"daos-admin"` | no |
+| <a name="input_instance_base_name"></a> [instance\_base\_name](#input\_instance\_base\_name) | resource\_prefix to assign to all instances | `string` | `"daos-admin"` | no |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | Number of DAOS admin instances to deploy | `number` | `1` | no |
 | <a name="input_instance_profile_name"></a> [instance\_profile\_name](#input\_instance\_profile\_name) | Name of the instance profile to use for DAOS admin instances | `string` | `"bx2-2x8"` | no |
 | <a name="input_os_image_name"></a> [os\_image\_name](#input\_os\_image\_name) | Name of disk image to use for DAOS admin instances | `string` | `"ibm-rocky-linux-8-6-minimal-amd64-2"` | no |

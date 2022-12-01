@@ -15,19 +15,19 @@
  */
 
 
-data "ibm_is_vpc" "daos_server_vpc" {
+data "ibm_is_vpc" "daos_server" {
   name = var.vpc_name
 }
 
-data "ibm_is_subnet" "daos_server_sn" {
+data "ibm_is_subnet" "daos_server" {
   name = var.subnet_name
 }
 
-data "ibm_is_image" "server_os_image" {
+data "ibm_is_image" "daos_server_os_image" {
   name = var.os_image_name
 }
 
-data "ibm_resource_group" "daos_rg" {
+data "ibm_resource_group" "daos" {
   name = var.resource_group_name
 }
 
@@ -36,11 +36,11 @@ data "ibm_is_ssh_key" "ssh_keys" {
   name     = each.value
 }
 
-data "ibm_is_security_group" "server" {
+data "ibm_is_security_group" "daos_server" {
   for_each = toset(var.security_group_names)
   name     = each.value
 }
 
-data "ibm_is_security_groups" "server" {
+data "ibm_is_security_groups" "daos_server" {
   vpc_name = var.vpc_name
 }

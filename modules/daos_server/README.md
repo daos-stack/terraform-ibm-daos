@@ -46,13 +46,13 @@ No modules.
 | [ibm_is_bare_metal_server.daos_server](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_bare_metal_server) | resource |
 | [ibm_is_instance.daos_server](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_instance) | resource |
 | [ibm_is_instance_template.daos_server](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_instance_template) | resource |
-| [ibm_is_image.server_os_image](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_image) | data source |
-| [ibm_is_security_group.server](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_security_group) | data source |
-| [ibm_is_security_groups.server](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_security_groups) | data source |
+| [ibm_is_image.daos_server_os_image](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_image) | data source |
+| [ibm_is_security_group.daos_server](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_security_group) | data source |
+| [ibm_is_security_groups.daos_server](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_security_groups) | data source |
 | [ibm_is_ssh_key.ssh_keys](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_ssh_key) | data source |
-| [ibm_is_subnet.daos_server_sn](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_subnet) | data source |
-| [ibm_is_vpc.daos_server_vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_vpc) | data source |
-| [ibm_resource_group.daos_rg](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/resource_group) | data source |
+| [ibm_is_subnet.daos_server](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_subnet) | data source |
+| [ibm_is_vpc.daos_server](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_vpc) | data source |
+| [ibm_resource_group.daos](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/resource_group) | data source |
 
 ## Inputs
 
@@ -60,11 +60,10 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_ansible_install_script_url"></a> [ansible\_install\_script\_url](#input\_ansible\_install\_script\_url) | URL for script that installs Ansible | `string` | `"https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/main/install_ansible.sh"` | no |
 | <a name="input_ansible_playbooks"></a> [ansible\_playbooks](#input\_ansible\_playbooks) | Ansible information to be used in a template that generates a user\_data script | <pre>list(object({<br>    venv_dir           = string<br>    collection_fqn     = string<br>    collection_git_url = string<br>    playbook_fqn       = string<br>  }))</pre> | <pre>[<br>  {<br>    "collection_fqn": "daos_stack.daos",<br>    "collection_git_url": "git+https://github.com/daos-stack/ansible-collection-daos.git,main",<br>    "playbook_fqn": "daos_stack.daos.daos_install",<br>    "venv_dir": "/usr/local/ansible-collection-daos/venv"<br>  }<br>]</pre> | no |
-| <a name="input_bare_metal_image_id"></a> [bare\_metal\_image\_id](#input\_bare\_metal\_image\_id) | Find bare\_metal\_image\_id: ibmcloud is images --visibility public \| grep -v deprecated | `string` | `"r006-ddca7216-184b-49a1-83d1-bfd3b356cd97"` | no |
+| <a name="input_bare_metal_image_id"></a> [bare\_metal\_image\_id](#input\_bare\_metal\_image\_id) | Find bare\_metal\_image\_id: ibmcloud is images --visibility public \| grep -v deprecated | `string` | `"r006-d2a541d6-ceac-420d-a612-8ab43453f376"` | no |
 | <a name="input_enable_bare_metal"></a> [enable\_bare\_metal](#input\_enable\_bare\_metal) | Use bare metal instances | `bool` | `true` | no |
-| <a name="input_ibmcloud_api_key"></a> [ibmcloud\_api\_key](#input\_ibmcloud\_api\_key) | IBM Cloud API Key | `string` | n/a | yes |
 | <a name="input_instance_bare_metal_profile_name"></a> [instance\_bare\_metal\_profile\_name](#input\_instance\_bare\_metal\_profile\_name) | Name of the instance profile for DAOS server bare metal instances | `string` | `"bx2d-metal-96x384"` | no |
-| <a name="input_instance_base_name"></a> [instance\_base\_name](#input\_instance\_base\_name) | Prefix to assign to all instances | `string` | `"daos-server"` | no |
+| <a name="input_instance_base_name"></a> [instance\_base\_name](#input\_instance\_base\_name) | resource\_prefix to assign to all instances | `string` | `"daos-server"` | no |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | Number of DAOS instances to deploy | `number` | `1` | no |
 | <a name="input_instance_profile_name"></a> [instance\_profile\_name](#input\_instance\_profile\_name) | Name of the instance profile to use for DAOS server instances | `string` | `"bx2d-48x192"` | no |
 | <a name="input_os_image_name"></a> [os\_image\_name](#input\_os\_image\_name) | Name of disk image to use for DAOS server | `string` | `"ibm-rocky-linux-8-6-minimal-amd64-2"` | no |
@@ -86,7 +85,7 @@ No modules.
 | <a name="output_daos_access_points_ips_bm"></a> [daos\_access\_points\_ips\_bm](#output\_daos\_access\_points\_ips\_bm) | List of DAOS server instance IPs that should be specified in the access\_points setting in DAOS .yml config files |
 | <a name="output_daos_server_names"></a> [daos\_server\_names](#output\_daos\_server\_names) | List of DAOS server names |
 | <a name="output_enable_bare_metal"></a> [enable\_bare\_metal](#output\_enable\_bare\_metal) | Boolean which indicates if DAOS servers use bare\_metal or not. |
-| <a name="output_instance_base_name"></a> [instance\_base\_name](#output\_instance\_base\_name) | Prefix assigned to all instances |
+| <a name="output_instance_base_name"></a> [instance\_base\_name](#output\_instance\_base\_name) | resource\_prefix assigned to all instances |
 | <a name="output_instance_count"></a> [instance\_count](#output\_instance\_count) | Number of DAOS instances |
 | <a name="output_instance_profile_name"></a> [instance\_profile\_name](#output\_instance\_profile\_name) | Name of the instance profile used for DAOS server instances |
 | <a name="output_os_image_name"></a> [os\_image\_name](#output\_os\_image\_name) | Name of disk image to use for DAOS servers |

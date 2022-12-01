@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-data "ibm_is_region" "region" {
-  name = var.region
-}
-
-data "ibm_is_zones" "regional_zones" {
-  region = var.region
-}
-
-data "ibm_resource_group" "example" {
-  name = var.resource_group
+data "ibm_resource_group" "daos" {
+  name = var.resource_group_name
 }

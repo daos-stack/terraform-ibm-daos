@@ -1,6 +1,6 @@
 ibmcloud_api_key = "<ibmcloud_api_key>"
 region           = "us-south"
-prefix           = "<prefix>"
+resource_prefix           = "<resource_prefix>"
 
 
 bastion_sg_ssh_allowed_ips = [

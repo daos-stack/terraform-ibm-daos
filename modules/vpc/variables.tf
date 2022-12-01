@@ -14,29 +14,33 @@
  * limitations under the License.
  */
 
-variable "ibmcloud_api_key" {
-  description = "IBM Cloud API Key"
+variable "region" {
+  description = "IBM Cloud Region where resources will be deployed"
   type        = string
+  default     = "us-south"
 }
 
 variable "ibmcloud_timeout" {
-  default = 900
+  description = "The timeout, expressed in seconds, for interacting with IBM Cloud APIs"
+  type        = number
+  default     = 900
 }
 
-variable "region" {
-  description = "IBM Cloud Region where resources will be deployed"
-  default     = "us-south"
+variable "resource_prefix" {
+  description = "String that is prepended to all resource names"
   type        = string
 }
 
-variable "resource_group" {
-  default = "Default"
+variable "resource_group_name" {
+  description = "The name of the resource group"
+  type        = string
+  default     = "Default"
 }
 
-variable "prefix" {
-  description = "Prefix to assign to all resource names"
-  default     = "daos-example"
-  type        = string
+variable "subnet_total_ipv4_address_count" {
+  description = "Total number of IPv4 addresses per subnet"
+  default     = 256
+  type        = number
 }
 
 
@@ -44,7 +48,7 @@ variable "prefix" {
   description = "VPN Subnets"
   type = list(object({
     zone            = string
-    address_prefix  = string
+    address_resource_prefix  = string
     ipv4_cidr_block = string
     enable_gateway  = bool
     gateway_mode    = string
@@ -53,21 +57,21 @@ variable "prefix" {
   default = [
     {
       zone            = "us-south-1"
-      address_prefix  = "10.240.0.0/18"
+      address_resource_prefix  = "10.240.0.0/18"
       ipv4_cidr_block = "10.240.0.0/24"
       enable_gateway  = true
       gateway_mode    = "route"
     },
     {
       zone            = "us-south-2"
-      address_prefix  = "10.240.63.0/18"
+      address_resource_prefix  = "10.240.63.0/18"
       ipv4_cidr_block = "10.240.63.0/24"
       enable_gateway  = true
       gateway_mode    = "route"
     },
     {
       zone            = "us-south-3"
-      address_prefix  = "10.240.128.0/18"
+      address_resource_prefix  = "10.240.128.0/18"
       ipv4_cidr_block = "10.240.128.0/24"
       enable_gateway  = true
       gateway_mode    = "route"
@@ -90,12 +94,11 @@ variable "prefix" {
 } */
 
 variable "bastion_sg_ssh_allowed_ips" {
-  description = "Corporate proxies for ingress rules in Security Groups"
+  description = "Allowed CIDRs for ingress rules to the bastion Security Group"
   type = list(object({
     name = string
     cidr = string
   }))
-  # See https://wiki.ith.intel.com/pages/viewpage.action?pageId=1034194135
   default = [
     {
       name = "ANY"

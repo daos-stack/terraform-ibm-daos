@@ -26,12 +26,12 @@ output "zone" {
 
 output "vpc_name" {
   description = "Name of VPC containing the DAOS Admin instance"
-  value       = data.ibm_is_vpc.daos_admin_vpc.name
+  value       = data.ibm_is_vpc.daos_admin.name
 }
 
 output "subnet_name" {
   description = "Name of the subnet for the DAOS Admin instance"
-  value       = data.ibm_is_subnet.daos_admin_sn.name
+  value       = data.ibm_is_subnet.daos_admin.name
 }
 
 output "ssh_key_names" {
@@ -74,5 +74,5 @@ output "user_data_script" {
 }*/
 
 output "admin_security_groups" {
-  value = data.ibm_is_security_group.admin
+  value = data.ibm_is_security_group.daos_admin
 }

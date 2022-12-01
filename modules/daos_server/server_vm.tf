@@ -19,19 +19,19 @@ resource "ibm_is_instance_template" "daos_server" {
   count = var.enable_bare_metal ? 0 : 1
   name  = "${var.instance_base_name}-it"
 
-  image     = data.ibm_is_image.server_os_image.id
+  image     = data.ibm_is_image.daos_server_os_image.id
   keys      = [for ssh_key in local.ssh_key_ids : ssh_key.id]
   profile   = var.instance_profile_name
   user_data = local.user_data_script
-  vpc       = data.ibm_is_vpc.daos_server_vpc.id
+  vpc       = data.ibm_is_vpc.daos_server.id
   zone      = var.zone
 
   metadata_service_enabled = true
 
   primary_network_interface {
     name            = "eth0"
-    subnet          = data.ibm_is_subnet.daos_server_sn.id
-    security_groups = [for sg in data.ibm_is_security_group.server : sg.id]
+    subnet          = data.ibm_is_subnet.daos_server.id
+    security_groups = [for sg in data.ibm_is_security_group.daos_server : sg.id]
   }
 }
 

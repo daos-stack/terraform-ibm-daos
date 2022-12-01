@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-variable "ibmcloud_api_key" {
-  description = "IBM Cloud API Key"
-  type        = string
-}
+
 
 variable "region" {
   description = "IBM Cloud Region"
@@ -62,7 +59,7 @@ variable "instance_profile_name" {
 }
 
 variable "instance_base_name" {
-  description = "Prefix to assign to all instances"
+  description = "resource_prefix to assign to all instances"
   default     = "daos-admin"
   type        = string
 }

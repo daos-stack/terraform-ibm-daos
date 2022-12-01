@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-provider "ibm" {
-  ibmcloud_api_key = var.ibmcloud_api_key
-  region           = var.region
-}
-
 locals {
   first_client = format("%s-%03s", var.instance_base_name, 1)
   clients      = var.instance_count == 1 ? local.first_client : format("%s-[%03s-%03s]", var.instance_base_name, 1, var.instance_count)
@@ -35,29 +30,32 @@ locals {
     }
   ]
 
-  user_data_script = templatefile("${path.module}/templates/user_data.sh.tftpl",
+  /* user_data_script = templatefile("${path.module}/templates/user_data.sh.tftpl",
     {
       ansible_install_script_url = var.ansible_install_script_url
       ansible_playbooks          = var.ansible_playbooks
       access_points              = var.daos_access_points
     }
-  )
+  ) */
 }
 
 resource "ibm_is_instance_template" "daos_client" {
-  name      = "${var.instance_base_name}-it"
-  image     = data.ibm_is_image.client_os_image.id
-  keys      = [for ssh_key in local.ssh_key_ids : ssh_key.id]
-  profile   = var.instance_profile_name
-  user_data = local.user_data_script
-  vpc       = data.ibm_is_vpc.daos_client_vpc.id
-  zone      = var.zone
+  name    = "${var.instance_base_name}-it"
+  image   = data.ibm_is_image.daos_client_os_image.id
+  keys    = [for ssh_key in local.ssh_key_ids : ssh_key.id]
+  profile = var.instance_profile_name
+  vpc     = data.ibm_is_vpc.daos_client.id
+  zone    = var.zone
+
+  resource_group = data.ibm_resource_group.daos.id
 
   metadata_service_enabled = true
 
+  #user_data = local.user_data_script
+
   primary_network_interface {
     name            = "eth0"
-    subnet          = data.ibm_is_subnet.daos_client_sn.id
+    subnet          = data.ibm_is_subnet.daos_client.id
     security_groups = [for sg in data.ibm_is_security_group.client : sg.id]
   }
 }

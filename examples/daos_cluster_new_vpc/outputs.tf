@@ -14,33 +14,12 @@
  * limitations under the License.
  */
 
-
-data "ibm_is_vpc" "daos_client" {
-  name = var.vpc_name
+output "region" {
+  description = "IBM Cloud region"
+  value       = var.region
 }
 
-data "ibm_is_subnet" "daos_client" {
-  name = var.subnet_name
-}
-
-data "ibm_is_image" "daos_client_os_image" {
-  name = var.os_image_name
-}
-
-data "ibm_resource_group" "daos" {
-  name = var.resource_group_name
-}
-
-data "ibm_is_ssh_key" "ssh_keys" {
-  for_each = toset(var.ssh_key_names)
-  name     = each.value
-}
-
-data "ibm_is_security_group" "client" {
-  for_each = toset(var.security_group_names)
-  name     = each.value
-}
-
-data "ibm_is_security_groups" "admin" {
-  vpc_name = var.vpc_name
-}
+/* output "resource_group_name" {
+  description = "Name of the resource group"
+  value       = module.resource_group.ibm_resource_group_name
+} */

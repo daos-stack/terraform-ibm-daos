@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-variable "ibmcloud_api_key" {
-  description = "IBM Cloud API Key"
-  type        = string
-}
+
 
 variable "region" {
   description = "IBM Cloud Region"
@@ -77,7 +74,7 @@ variable "instance_bare_metal_profile_name" {
 }
 
 variable "instance_base_name" {
-  description = "Prefix to assign to all instances"
+  description = "resource_prefix to assign to all instances"
   default     = "daos-server"
   type        = string
 }
@@ -98,7 +95,8 @@ variable "ssh_key_names" {
 # ibmcloud is images --visibility public | grep -v deprecated
 variable "bare_metal_image_id" {
   type    = string
-  default = "r006-ddca7216-184b-49a1-83d1-bfd3b356cd97" # ibm-redhat-8-4-minimal-amd64-4
+  default = "r006-d2a541d6-ceac-420d-a612-8ab43453f376" # ibm-redhat-8-6-minimal-amd64-3
+  #default = "r006-ddca7216-184b-49a1-83d1-bfd3b356cd97" # ibm-redhat-8-4-minimal-amd64-4
 }
 
 variable "ansible_install_script_url" {

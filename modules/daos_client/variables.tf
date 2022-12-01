@@ -14,63 +14,60 @@
  * limitations under the License.
  */
 
-variable "ibmcloud_api_key" {
-  description = "IBM Cloud API Key"
-  type        = string
-}
+
 
 variable "region" {
   description = "IBM Cloud Region"
-  default     = "us-south"
   type        = string
+  default     = "us-south"
 }
 
 variable "zone" {
   description = "IBM Cloud Zone"
-  default     = "us-south-3"
   type        = string
+  default     = "us-south-3"
 }
 
 variable "vpc_name" {
   description = "VPC name"
-  default     = null
   type        = string
+  default     = null
 }
 
 variable "subnet_name" {
   description = "Subnet name"
-  default     = null
   type        = string
+  default     = null
 }
 
 variable "resource_group_name" {
   description = "Resource group name"
-  default     = "Default"
   type        = string
+  default     = "Default"
 }
 
 variable "instance_count" {
-  description = "Number of DAOS instances to deploy"
-  default     = 1
+  description = "Number of DAOS client instances to deploy"
   type        = number
+  default     = 1
 }
 
 variable "instance_profile_name" {
   description = "Name of the instance profile to use for DAOS clients"
-  default     = "bx2d-48x192" # mx2d-48x384
   type        = string
+  default     = "bx2d-48x192" # mx2d-48x384
 }
 
 variable "instance_base_name" {
-  description = "Prefix to assign to all instances"
-  default     = "daos-client"
+  description = "resource_prefix to assign to all instances"
   type        = string
+  default     = "daos-client"
 }
 
 variable "os_image_name" {
   description = "Name of disk image to use for DAOS clients"
-  default     = "ibm-rocky-linux-8-6-minimal-amd64-2"
   type        = string
+  default     = "ibm-rocky-linux-8-6-minimal-amd64-2"
 }
 
 variable "ssh_key_names" {
@@ -84,13 +81,14 @@ variable "security_group_names" {
   type        = list(string)
 }
 
+/*
 variable "ansible_install_script_url" {
   description = "URL for script that installs Ansible"
   type        = string
   default     = "https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/main/install_ansible.sh"
-}
+} */
 
-# List of Ansible playbooks that exist within collections.
+/* # List of Ansible playbooks that exist within collections.
 # Playbooks will run in the order specified.
 variable "ansible_playbooks" {
   description = "Ansible information to be used in a template that generates a user_data script"
@@ -108,9 +106,9 @@ variable "ansible_playbooks" {
       playbook_fqn       = "daos_stack.daos.daos_install"
     }
   ]
-}
+} */
 
-variable "daos_access_points" {
+/* variable "daos_access_points" {
   description = "List of DAOS access points. This value should be provided by the daos_server module output."
   type        = list(string)
-}
+} */

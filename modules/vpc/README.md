@@ -21,11 +21,11 @@ This Terraform configuration will create a multi-zone VPC in one region.
    ```bash
    cd examples/vpc
    cp terraform.tfvars.example terraform.tfvars
-   sed -i "s/<prefix>/${USER}/g" terraform.tfvars
+   sed -i "s/<resource_prefix>/${USER}/g" terraform.tfvars
    sed -i "s/<ibmcloud_api_key>/${IBMCLOUD_API_KEY}/g" terraform.tfvars
    ```
 
-   It is recommended that you use your username for the `prefix` variable. This will allow you to identify your VPC resources in a multi-user environment.
+   It is recommended that you use your username for the `resource_prefix` variable. This will allow you to identify your VPC resources in a multi-user environment.
 
    If you don't have the `IBMCLOUD_API_KEY` environment variable set in your shell, you will need to edit the `terraform.tfvars` file and update the `ibmcloud_api_key` value.
 
@@ -98,39 +98,40 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [ibm_is_network_acl.example](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_network_acl) | resource |
-| [ibm_is_public_gateway.example](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_public_gateway) | resource |
+| [ibm_is_network_acl.allow_all](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_network_acl) | resource |
+| [ibm_is_public_gateway.daos_gw](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_public_gateway) | resource |
 | [ibm_is_security_group.bastion](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group) | resource |
 | [ibm_is_security_group.instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group) | resource |
 | [ibm_is_security_group_rule.bastion_egress_all](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
 | [ibm_is_security_group_rule.bastion_ingress_ssh](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
 | [ibm_is_security_group_rule.instance_egress](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
 | [ibm_is_security_group_rule.instance_ingress](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
-| [ibm_is_subnet.subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_subnet) | resource |
-| [ibm_is_vpc.example](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_vpc) | resource |
+| [ibm_is_subnet.daos_sn](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_subnet) | resource |
+| [ibm_is_vpc.daos_vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_vpc) | resource |
 | [ibm_is_region.region](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_region) | data source |
 | [ibm_is_zones.regional_zones](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_zones) | data source |
-| [ibm_resource_group.example](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/resource_group) | data source |
+| [ibm_resource_group.daos_rg](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/resource_group) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_bastion_sg_ssh_allowed_ips"></a> [bastion\_sg\_ssh\_allowed\_ips](#input\_bastion\_sg\_ssh\_allowed\_ips) | Corporate proxies for ingress rules in Security Groups | <pre>list(object({<br>    name = string<br>    cidr = string<br>  }))</pre> | <pre>[<br>  {<br>    "cidr": "0.0.0.0/0",<br>    "name": "ANY"<br>  }<br>]</pre> | no |
-| <a name="input_ibmcloud_api_key"></a> [ibmcloud\_api\_key](#input\_ibmcloud\_api\_key) | IBM Cloud API Key | `string` | n/a | yes |
-| <a name="input_ibmcloud_timeout"></a> [ibmcloud\_timeout](#input\_ibmcloud\_timeout) | n/a | `number` | `900` | no |
-| <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix to assign to all resource names | `string` | `"daos-example"` | no |
+| <a name="input_bastion_sg_ssh_allowed_ips"></a> [bastion\_sg\_ssh\_allowed\_ips](#input\_bastion\_sg\_ssh\_allowed\_ips) | Allowed CIDRs for ingress rules to the bastion Security Group | <pre>list(object({<br>    name = string<br>    cidr = string<br>  }))</pre> | <pre>[<br>  {<br>    "cidr": "0.0.0.0/0",<br>    "name": "ANY"<br>  }<br>]</pre> | no |
+| <a name="input_ibmcloud_timeout"></a> [ibmcloud\_timeout](#input\_ibmcloud\_timeout) | The timeout, expressed in seconds, for interacting with IBM Cloud APIs | `number` | `900` | no |
 | <a name="input_region"></a> [region](#input\_region) | IBM Cloud Region where resources will be deployed | `string` | `"us-south"` | no |
-| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | n/a | `string` | `"Default"` | no |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group | `string` | `"Default"` | no |
+| <a name="input_resource_prefix"></a> [resource\_prefix](#input\_resource\_prefix) | String that is prepended to all resource names | `string` | n/a | yes |
+| <a name="input_subnet_total_ipv4_address_count"></a> [subnet\_total\_ipv4\_address\_count](#input\_subnet\_total\_ipv4\_address\_count) | Total number of IPv4 addresses per subnet | `number` | `256` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
+| <a name="output_bastion_sg_name"></a> [bastion\_sg\_name](#output\_bastion\_sg\_name) | The name of the bastion security group |
+| <a name="output_crn"></a> [crn](#output\_crn) | The CRN of the VPC |
+| <a name="output_id"></a> [id](#output\_id) | The ID of the VPC |
+| <a name="output_instance_sg_name"></a> [instance\_sg\_name](#output\_instance\_sg\_name) | The name of the instance security group |
+| <a name="output_name"></a> [name](#output\_name) | The name of the VPC |
 | <a name="output_region"></a> [region](#output\_region) | IBM Cloud region |
-| <a name="output_vpc_bastion_sg_name"></a> [vpc\_bastion\_sg\_name](#output\_vpc\_bastion\_sg\_name) | The name of the bastion security group |
-| <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | The ID of the VPC |
-| <a name="output_vpc_instance_sg_name"></a> [vpc\_instance\_sg\_name](#output\_vpc\_instance\_sg\_name) | The name of the instance security group |
-| <a name="output_vpc_name"></a> [vpc\_name](#output\_vpc\_name) | The name of the VPC |
-| <a name="output_vpc_subnet_names"></a> [vpc\_subnet\_names](#output\_vpc\_subnet\_names) | The names of the subnets in the VPC |
+| <a name="output_subnet_names"></a> [subnet\_names](#output\_subnet\_names) | The names of the subnets in the VPC |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-# main.tf for daos_admin module
-provider "ibm" {
-  ibmcloud_api_key = var.ibmcloud_api_key
-  region           = var.region
-}
-
 locals {
   ssh_key_ids = [
     for ssh_key in data.ibm_is_ssh_key.ssh_keys : {
@@ -28,7 +22,7 @@ locals {
   ]
 
   security_group_ids = [
-    for sg in data.ibm_is_security_group.admin : {
+    for sg in data.ibm_is_security_group.daos_admin : {
       id = sg.id
     }
   ]
@@ -47,19 +41,19 @@ locals {
 # This template format can be used with instance groups
 resource "ibm_is_instance_template" "daos_admin" {
   name      = "${var.instance_base_name}-it"
-  image     = data.ibm_is_image.admin_os_image.id
+  image     = data.ibm_is_image.daos_admin_os_image.id
   keys      = [for ssh_key in local.ssh_key_ids : ssh_key.id]
   profile   = var.instance_profile_name
   user_data = local.user_data_script
-  vpc       = data.ibm_is_vpc.daos_admin_vpc.id
+  vpc       = data.ibm_is_vpc.daos_admin.id
   zone      = var.zone
 
   metadata_service_enabled = true
 
   primary_network_interface {
     name            = "eth0"
-    subnet          = data.ibm_is_subnet.daos_admin_sn.id
-    security_groups = [for sg in data.ibm_is_security_group.admin : sg.id]
+    subnet          = data.ibm_is_subnet.daos_admin.id
+    security_groups = [for sg in data.ibm_is_security_group.daos_admin : sg.id]
     # security_groups = var.security_group_names
     # security_groups = local.security_group_ids
     # security_groups = data.ibm_is_security_group.admin

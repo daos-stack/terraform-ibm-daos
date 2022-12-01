@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-provider "ibm" {
-  ibmcloud_api_key = var.ibmcloud_api_key
-  region           = var.region
-  ibmcloud_timeout = var.ibmcloud_timeout
+data "ibm_is_region" "region" {
+  name = var.region
+}
+
+data "ibm_is_zones" "regional_zones" {
+  region = var.region
+}
+
+data "ibm_resource_group" "daos_rg" {
+  name = var.resource_group_name
 }

@@ -1,8 +1,7 @@
-#!/bin/bash
-#
-# user_data script for DAOS server instances
-#
+#!/usr/bin/env bash
+# user_data script for DAOS admin instances
 
+# ACD is short for ansible-collection-daos
 ACD_DIR="$${ACD_DIR:-/opt/ansible-collection-daos}"
 ACD_VENV_DIR="$${ACD_DIR}/venv"
 ACD_VARS_FILE="$${ACD_DIR}/vars.yml"

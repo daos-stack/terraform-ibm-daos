@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-resource "ibm_is_vpc" "example" {
-  name                        = "${var.prefix}-vpc"
-  resource_group              = data.ibm_resource_group.example.id
-  address_prefix_management   = "auto"
-  default_network_acl_name    = "${var.prefix}-default-acl"
-  default_security_group_name = "${var.prefix}-default-sg"
-  default_routing_table_name  = "${var.prefix}-default-rt"
+resource "ibm_is_vpc" "daos_vpc" {
+  name                        = "${var.resource_prefix}-vpc"
+  resource_group              = data.ibm_resource_group.daos_rg.id
+  default_network_acl_name    = "${var.resource_prefix}-default-acl"
+  default_security_group_name = "${var.resource_prefix}-default-sg"
+  default_routing_table_name  = "${var.resource_prefix}-default-rt"
 }
 
-resource "ibm_is_network_acl" "example" {
-  name           = "${var.prefix}-allow-all-acl"
-  vpc            = ibm_is_vpc.example.id
-  resource_group = data.ibm_resource_group.example.id
+resource "ibm_is_network_acl" "allow_all" {
+  name           = "${var.resource_prefix}-allow-all-acl"
+  vpc            = ibm_is_vpc.daos_vpc.id
+  resource_group = data.ibm_resource_group.daos_rg.id
   rules {
     name        = "egress"
     action      = "allow"
@@ -43,29 +42,29 @@ resource "ibm_is_network_acl" "example" {
   }
 }
 
-resource "ibm_is_public_gateway" "example" {
+resource "ibm_is_public_gateway" "daos_gw" {
   count          = length(data.ibm_is_zones.regional_zones.zones)
-  name           = "${var.prefix}-gw-${count.index + 1}"
-  vpc            = ibm_is_vpc.example.id
+  name           = "${var.resource_prefix}-gw-${count.index + 1}"
+  vpc            = ibm_is_vpc.daos_vpc.id
   zone           = data.ibm_is_zones.regional_zones.zones[count.index]
-  resource_group = data.ibm_resource_group.example.id
+  resource_group = data.ibm_resource_group.daos_rg.id
 }
 
-resource "ibm_is_subnet" "subnet" {
+resource "ibm_is_subnet" "daos_sn" {
   count                    = length(data.ibm_is_zones.regional_zones.zones)
-  name                     = "${var.prefix}-${data.ibm_is_zones.regional_zones.zones[count.index]}-sn"
-  vpc                      = ibm_is_vpc.example.id
+  name                     = "${var.resource_prefix}-${data.ibm_is_zones.regional_zones.zones[count.index]}-sn"
+  vpc                      = ibm_is_vpc.daos_vpc.id
   zone                     = data.ibm_is_zones.regional_zones.zones[count.index]
-  resource_group           = data.ibm_resource_group.example.id
-  total_ipv4_address_count = 256
-  network_acl              = ibm_is_network_acl.example.id
-  public_gateway           = ibm_is_public_gateway.example[count.index].id
+  resource_group           = data.ibm_resource_group.daos_rg.id
+  total_ipv4_address_count = var.subnet_total_ipv4_address_count
+  network_acl              = ibm_is_network_acl.allow_all.id
+  public_gateway           = ibm_is_public_gateway.daos_gw[count.index].id
 }
 
 resource "ibm_is_security_group" "bastion" {
-  name           = "${var.prefix}-bastion-sg"
-  vpc            = ibm_is_vpc.example.id
-  resource_group = data.ibm_resource_group.example.id
+  name           = "${var.resource_prefix}-bastion-sg"
+  vpc            = ibm_is_vpc.daos_vpc.id
+  resource_group = data.ibm_resource_group.daos_rg.id
 }
 
 resource "ibm_is_security_group_rule" "bastion_egress_all" {
@@ -86,16 +85,16 @@ resource "ibm_is_security_group_rule" "bastion_ingress_ssh" {
 }
 
 resource "ibm_is_security_group" "instance" {
-  name           = "${var.prefix}-instance-sg"
-  vpc            = ibm_is_vpc.example.id
-  resource_group = data.ibm_resource_group.example.id
+  name           = "${var.resource_prefix}-instance-sg"
+  vpc            = ibm_is_vpc.daos_vpc.id
+  resource_group = data.ibm_resource_group.daos_rg.id
 }
 
 resource "ibm_is_security_group_rule" "instance_ingress" {
   count     = length(data.ibm_is_zones.regional_zones.zones)
   group     = ibm_is_security_group.instance.id
   direction = "inbound"
-  remote    = ibm_is_subnet.subnet[count.index].ipv4_cidr_block
+  remote    = ibm_is_subnet.daos_sn[count.index].ipv4_cidr_block
   tcp {
     port_min = 1
     port_max = 65535

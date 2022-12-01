@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-provider "ibm" {
-  ibmcloud_api_key = var.ibmcloud_api_key
-  region           = var.region
-}
-
 locals {
   first_server  = format("%s-%03s", var.instance_base_name, 1)
   servers       = var.instance_count == 1 ? local.first_server : format("%s-[%03s-%03s]", var.instance_base_name, 1, var.instance_count)
@@ -32,7 +27,7 @@ locals {
   ]
 
   security_group_ids = [
-    for sg in data.ibm_is_security_group.server : [
+    for sg in data.ibm_is_security_group.daos_server : [
       sg.id
     ]
   ]

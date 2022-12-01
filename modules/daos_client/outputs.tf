@@ -50,7 +50,7 @@ output "instance_profile_name" {
 }
 
 output "instance_base_name" {
-  description = "Prefix assigned to all instances"
+  description = "resource_prefix assigned to all instances"
   value       = var.instance_base_name
 }
 

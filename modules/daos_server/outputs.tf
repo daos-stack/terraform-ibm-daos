@@ -50,7 +50,7 @@ output "instance_profile_name" {
 }
 
 output "instance_base_name" {
-  description = "Prefix assigned to all instances"
+  description = "resource_prefix assigned to all instances"
   value       = var.instance_base_name
 }
 
@@ -66,7 +66,7 @@ output "ssh_key_names" {
 
 /* output "security_groups" {
   description = "List of Security Groups attached to the DAOS server instance"
-  value       = [for sg in data.ibm_is_security_group.server[*] : sg.name]
+  value       = [for sg in data.ibm_is_security_group.daos_server[*] : sg.name]
 } */
 
 /* output "user_data_script" {
