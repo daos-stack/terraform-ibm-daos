@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# Startup script for DAOS admin instance
+
+SCRIPT_DIR=$(cd "$(dirname "$${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+SCRIPT_FILENAME=$(basename "$${BASH_SOURCE[0]}")
+ln -s "$${SCRIPT_DIR}/$${SCRIPT_FILENAME}" /root/startup-script.sh
+
+export ANS_DIR="/root/ansible-daos"
+export ANS_GROUP_VARS_DIR="$${ANS_DIR}/group_vars"
+export ANS_VENV_DIR="$${ANS_DIR}/.venv"
+export ANS_VARS_FILE="$${ANS_DIR}/playbook_vars.yml"
+export ANS_INSTALL_URL="${ansible_install_script_url}"
+export ANS_CREATE_INV=true
+export ANS_CREATE_CFG=true
+export ANSIBLE_DEPRECATION_WARNINGS=False
+export ANSIBLE_HOST_KEY_CHECKING=False
+
+# BEGIN: Logging variables and functions
+declare -A LOG_LEVELS=([DEBUG]=0 [INFO]=1  [WARN]=2 [ERROR]=3 [FATAL]=4 [OFF]=5)
+declare -A LOG_COLORS=([DEBUG]=2 [INFO]=12 [WARN]=3 [ERROR]=1 [FATAL]=9 [OFF]=0 [OTHER]=15)
+LOG_LEVEL=INFO
+
+log() {
+  local msg="$1"
+  local lvl=$${2:-INFO}
+  if [[ $${LOG_LEVELS[$LOG_LEVEL]} -le $${LOG_LEVELS[$lvl]} ]]; then
+    if [[ -t 1 ]]; then tput setaf "$${LOG_COLORS[$lvl]}"; fi
+    printf "[%-5s] %s\n" "$lvl" "$${msg}" 1>&2
+    if [[ -t 1 ]]; then tput sgr0; fi
+  fi
+}
+
+log.debug() { log "$${1}" "DEBUG" ; }
+log.info()  { log "$${1}" "INFO"  ; }
+log.warn()  { log "$${1}" "WARN"  ; }
+log.error() { log "$${1}" "ERROR" ; }
+log.fatal() { log "$${1}" "FATAL" ; }
+# END: Logging variables and functions
+
+log.info "BEGIN_STARTUP_SCRIPT: $${SCRIPT_FILENAME}"
+
+# Sometimes it takes a while for the network to be ready.
+# Loop until we get a 200 from github
+timeout 300 bash -c "while [[ \"$(curl -s -o /dev/null -w '%%{http_code}' https://github.com)\" != '200' ]]; do sleep 5; done"
+
+log.info "Installing ansible"
+/usr/bin/curl -s -H 'Cache-Control: no-cache, no-store' \
+  --no-sessionid \
+  "$${ANS_INSTALL_URL}" \
+  | /bin/bash -s
+
+cd $${ANS_DIR}
+source $${ANS_DIR}/.venv/bin/activate
+
+log.info "Create scripts to run playbooks"
+cat > $${ANS_DIR}/ping-all.sh <<EOF
+#!/usr/bin/env bash
+source $${ANS_DIR}/.venv/bin/activate
+ansible all -m ping
+EOF
+chmod +x $${ANS_DIR}/ping-all.sh
+
+$${ANS_DIR}/ping-all.sh
+
+%{ for ap in ansible_playbooks }
+playbook_script_path="$${ANS_DIR}/run_playbook_${replace(ap.collection_fqn, "/\\./", "_")}.sh"
+cat > $${playbook_script_path} <<EOF
+#!/usr/bin/env bash
+cd $${ANS_DIR}
+source $${ANS_DIR}/.venv/bin/activate
+
+if ! ansible-galaxy collection list | grep -q "${ap.collection_fqn}"; then
+  echo "Installing Ansible Collection: ${ap.collection_fqn}"
+  ansible-galaxy collection install \
+    --clear-response-cache \
+    --force-with-deps \
+    "${ap.collection_git_url}"
+else
+  echo "Collection already installed: ${ap.collection_fqn}"
+fi
+
+echo "Running playbook: ${ap.playbook_fqn}"
+echo "Command: ansible-playbook ${ap.playbook_fqn}"
+cd $${ANS_DIR}
+ansible-playbook -b ${ap.playbook_fqn}
+EOF
+chmod +x $${playbook_script_path}
+
+log.info "Run $${playbook_script_path}"
+$${playbook_script_path}
+%{ endfor }
+
+log.info "END_STARTUP_SCRIPT: $${SCRIPT_FILENAME}"
