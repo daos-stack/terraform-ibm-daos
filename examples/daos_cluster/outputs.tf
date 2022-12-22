@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-resource "ibm_is_vpc" "daos" {
-  name                        = "${var.name}-vpc"
-  resource_group              = data.ibm_resource_group.daos.id
-  default_network_acl_name    = "${var.name}-default-acl"
-  default_security_group_name = "${var.name}-default-sg"
-  default_routing_table_name  = "${var.name}-default-rt"
+
+output "region" {
+  description = "IBM Cloud region"
+  value       = var.region
+}
+
+output "zone" {
+  description = "IBM Cloud zone"
+  value       = var.zone
+}
+
+output "resource_group_name" {
+  description = "Resource group name for DAOS cluster resources"
+  value       = var.resource_group_name
 }

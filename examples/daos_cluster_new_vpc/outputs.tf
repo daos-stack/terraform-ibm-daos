@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
+
 output "region" {
   description = "IBM Cloud region"
   value       = var.region
 }
 
-/* output "resource_group_name" {
-  description = "Name of the resource group"
-  value       = module.resource_group.ibm_resource_group_name
-} */
+output "zone" {
+  description = "IBM Cloud zone"
+  value       = var.zone
+}
+
+output "resource_group_name" {
+  description = "Resource group name for DAOS cluster resources"
+  value       = var.resource_group_name
+}
+
+output "bastion_ip_address" {
+  description = "External floating IP for the DAOS admin instance (bastion)"
+  value       = module.daos_admin.floating_ip_address
+}

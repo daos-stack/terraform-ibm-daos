@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-module "vpc" {
-  source                  = "../../modules/vpc"
-  region                  = var.region
-  name                    = try("${var.resource_prefix}-${var.vpc_name}", "${var.vpc_name}")
-  resource_group_name     = var.resource_group_name
-  bastion_ssh_allowed_ips = var.bastion_ssh_allowed_ips
-}
-
 module "daos_common" {
   source              = "../../modules/daos_common"
   resource_group_name = var.resource_group_name
@@ -38,9 +30,9 @@ module "daos_server" {
   instance_count        = var.server_instance_count
   use_bare_metal        = var.server_use_bare_metal
   ssh_key_names         = var.ssh_key_names
-  vpc_name              = module.vpc.name
-  subnet_name           = one([for item in module.vpc.subnet_names : item if can(regex(var.zone, item))])
-  security_group_names  = [module.vpc.instance_security_group_name]
+  vpc_name              = var.vpc_name
+  subnet_name           = var.server_subnet_name
+  security_group_names  = [var.server_security_group_name]
   ansible_public_key    = module.daos_common.ansible_public_key
   daos_admin_public_key = module.daos_common.daos_admin_public_key
 }
@@ -51,12 +43,11 @@ module "daos_client" {
   region                = var.region
   zone                  = var.zone
   resource_group_name   = var.resource_group_name
-  resource_prefix       = var.resource_prefix
   instance_count        = var.client_instance_count
   ssh_key_names         = var.ssh_key_names
-  vpc_name              = module.vpc.name
-  subnet_name           = one([for item in module.vpc.subnet_names : item if can(regex(var.zone, item))])
-  security_group_names  = [module.vpc.instance_security_group_name]
+  vpc_name              = var.vpc_name
+  subnet_name           = var.client_subnet_name
+  security_group_names  = [var.client_security_group_name]
   ansible_public_key    = module.daos_common.ansible_public_key
   daos_admin_public_key = module.daos_common.daos_admin_public_key
 }
@@ -67,26 +58,22 @@ module "daos_admin" {
     module.daos_server,
     module.daos_client
   ]
-  source              = "../../modules/daos_admin"
-  region              = var.region
-  zone                = var.zone
-  resource_group_name = var.resource_group_name
-  resource_prefix     = var.resource_prefix
-
-  vpc_name             = module.vpc.name
-  subnet_name          = one([for item in module.vpc.subnet_names : item if can(regex(var.zone, item))])
-  security_group_names = [module.vpc.bastion_security_group_name]
-
+  source                     = "../../modules/daos_admin"
+  region                     = var.region
+  zone                       = var.zone
+  resource_group_name        = var.resource_group_name
+  resource_prefix            = var.resource_prefix
   ssh_key_names              = var.ssh_key_names
+  vpc_name                   = var.vpc_name
+  subnet_name                = var.admin_subnet_name
+  security_group_names       = [var.admin_security_group_name]
+  daos_client_instances      = module.daos_client.daos_client_instances
+  daos_server_instances      = module.daos_server.daos_server_instances
+  ansible_playbooks          = var.admin_ansible_playbooks
+  ansible_install_script_url = var.admin_ansible_install_script_url
   bastion_public_key         = var.bastion_public_key
   ansible_private_key_pem    = module.daos_common.ansible_private_key_pem
   ansible_public_key         = module.daos_common.ansible_public_key
   daos_admin_private_key_pem = module.daos_common.daos_admin_private_key_pem
   daos_admin_public_key      = module.daos_common.daos_admin_public_key
-
-  daos_client_instances = module.daos_client.daos_client_instances
-  daos_server_instances = module.daos_server.daos_server_instances
-
-  ansible_install_script_url = var.admin_ansible_install_script_url
-  ansible_playbooks          = var.admin_ansible_playbooks
 }

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-
-
 variable "region" {
   description = "IBM Cloud Region"
   type        = string
@@ -46,6 +44,12 @@ variable "resource_group_name" {
   default     = "Default"
 }
 
+variable "resource_prefix" {
+  description = "String to prepend to all resource names"
+  type        = string
+  default     = null
+}
+
 variable "instance_count" {
   description = "Number of DAOS client instances to deploy"
   type        = number
@@ -59,7 +63,7 @@ variable "instance_profile_name" {
 }
 
 variable "instance_base_name" {
-  description = "resource_prefix to assign to all instances"
+  description = "Base name for instances"
   type        = string
   default     = "daos-client"
 }
@@ -81,34 +85,12 @@ variable "security_group_names" {
   type        = list(string)
 }
 
-/*
-variable "ansible_install_script_url" {
-  description = "URL for script that installs Ansible"
+variable "daos_admin_public_key" {
+  description = "Public key data for the daos_admin user in 'Authorized Keys' format"
   type        = string
-  default     = "https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/main/install_ansible.sh"
-} */
+}
 
-/* # List of Ansible playbooks that exist within collections.
-# Playbooks will run in the order specified.
-variable "ansible_playbooks" {
-  description = "Ansible information to be used in a template that generates a user_data script"
-  type = list(object({
-    venv_dir           = string
-    collection_fqn     = string
-    collection_git_url = string
-    playbook_fqn       = string
-  }))
-  default = [
-    {
-      venv_dir           = "/usr/local/ansible-collection-daos/venv"
-      collection_fqn     = "daos_stack.daos"
-      collection_git_url = "git+https://github.com/daos-stack/ansible-collection-daos.git,main"
-      playbook_fqn       = "daos_stack.daos.daos_install"
-    }
-  ]
-} */
-
-/* variable "daos_access_points" {
-  description = "List of DAOS access points. This value should be provided by the daos_server module output."
-  type        = list(string)
-} */
+variable "ansible_public_key" {
+  description = "Public key data for the ansible user in 'Authorized Keys' format"
+  type        = string
+}

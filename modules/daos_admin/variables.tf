@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-
-
 variable "region" {
   description = "IBM Cloud Region"
   default     = "us-south"
@@ -46,10 +44,16 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "instance_count" {
-  description = "Number of DAOS admin instances to deploy"
-  default     = 1
-  type        = number
+variable "resource_prefix" {
+  description = "String to prepend to all resource names"
+  type        = string
+  default     = null
+}
+
+variable "instance_base_name" {
+  description = "Base name for instances"
+  default     = "daos-admin"
+  type        = string
 }
 
 variable "instance_profile_name" {
@@ -58,11 +62,6 @@ variable "instance_profile_name" {
   type        = string
 }
 
-variable "instance_base_name" {
-  description = "resource_prefix to assign to all instances"
-  default     = "daos-admin"
-  type        = string
-}
 
 variable "os_image_name" {
   description = "Name of disk image to use for DAOS admin instances"
@@ -71,7 +70,7 @@ variable "os_image_name" {
 }
 
 variable "ssh_key_names" {
-  description = "List of SSH key names to add to DAOS admin instances"
+  description = "List of SSH key names to add to DAOS admin instances. These are names of keys added to the VPC."
   type        = list(string)
   default     = []
 }
@@ -99,10 +98,10 @@ variable "ansible_playbooks" {
   }))
   default = [
     {
-      venv_dir           = "/usr/local/ansible-collection-daos/venv"
+      venv_dir           = "/root/ansible-daos/venv"
       collection_fqn     = "daos_stack.daos"
       collection_git_url = "git+https://github.com/daos-stack/ansible-collection-daos.git,main"
-      playbook_fqn       = "daos_stack.daos.daos_install"
+      playbook_fqn       = "daos_stack.daos.daos_cluster"
     }
   ]
 }
@@ -110,14 +109,53 @@ variable "ansible_playbooks" {
 variable "daos_access_points" {
   description = "List of DAOS access points. This value should be provided by the daos_server module output."
   type        = list(string)
+  default     = []
 }
 
-variable "daos_server_names" {
-  description = "List of DAOS server host names. This value should be provided by the daos_server module output."
-  type        = list(string)
+variable "daos_client_instances" {
+  description = "List of DAOS client instance names and IPs"
+
+  type = list(object({
+    name = string,
+    ip   = string
+  }))
+
+  default = []
 }
 
-variable "daos_client_names" {
-  description = "List of DAOS client host names. This value should be provided by the daos_server module output."
-  type        = list(string)
+variable "daos_server_instances" {
+  description = "List of DAOS server instance names and IPs"
+
+  type = list(object({
+    name            = string,
+    ip              = string,
+    is_access_point = bool
+  }))
+
+  default = []
+}
+
+variable "ansible_private_key_pem" {
+  description = "Private key data for the ansible user in PEM format"
+  type        = string
+}
+
+variable "ansible_public_key" {
+  description = "Public key data for the ansible user in 'Authorized Keys' format"
+  type        = string
+}
+
+variable "daos_admin_private_key_pem" {
+  description = "Private key data for the daos_admin user in PEM format"
+  type        = string
+}
+
+variable "daos_admin_public_key" {
+  description = "Public key data for the daos_admin user in 'Authorized Keys' format"
+  type        = string
+}
+
+variable "bastion_public_key" {
+  description = "Public key data in 'Authorized Keys' format to allow you to log into the bastion host as the daos_admin user."
+  type        = string
 }

@@ -25,5 +25,5 @@ uniq_paths=$(echo "${paths[@]}" | tr ' ' '\n' | sort -u)
 
 for path in $uniq_paths; do
     terraform-docs markdown --config .tfdocs-markdown.yaml "${path}"
-    terraform-docs json --config .tfdocs-json.yaml "${path}"
+    #terraform-docs json --config .tfdocs-json.yaml "${path}"
 done

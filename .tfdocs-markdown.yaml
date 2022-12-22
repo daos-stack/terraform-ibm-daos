@@ -17,6 +17,7 @@ formatter: markdown
 # do not use lockfile to determine version ranges placed into docs
 settings:
   lockfile: false
+  indent: 3
 
 output:
   file: README.md

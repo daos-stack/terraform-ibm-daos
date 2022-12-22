@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
+terraform {
+  required_providers {
+    ibm = {
+      source  = "IBM-Cloud/ibm"
+      version = "1.48.0"
+    }
+  }
+}
+
 provider "ibm" {
-  region           = var.region
-  ibmcloud_timeout = var.ibmcloud_timeout
+  region = var.region
 }

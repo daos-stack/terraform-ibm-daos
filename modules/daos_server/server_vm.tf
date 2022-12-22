@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-# This template format can be used with instance groups
 resource "ibm_is_instance_template" "daos_server" {
-  count = var.enable_bare_metal ? 0 : 1
-  name  = "${var.instance_base_name}-it"
+  count = var.use_bare_metal ? 0 : 1
+  name  = "${local.base_name}-it"
 
   image     = data.ibm_is_image.daos_server_os_image.id
   keys      = [for ssh_key in local.ssh_key_ids : ssh_key.id]
   profile   = var.instance_profile_name
-  user_data = local.user_data_script
+  user_data = local.user_data
   vpc       = data.ibm_is_vpc.daos_server.id
   zone      = var.zone
 
@@ -36,11 +35,11 @@ resource "ibm_is_instance_template" "daos_server" {
 }
 
 resource "ibm_is_instance" "daos_server" {
-  count             = var.enable_bare_metal ? 0 : var.instance_count
-  name              = format("%s-%04s", var.instance_base_name, "${count.index + 1}")
+  count             = var.use_bare_metal ? 0 : var.instance_count
+  name              = format("%s-%03s", local.base_name, "${count.index + 1}")
   instance_template = ibm_is_instance_template.daos_server[0].id
 
   boot_volume {
-    name = format("%s-%03s-bv", var.instance_base_name, "${count.index + 1}")
+    name = format("%s-%03s-bv", local.base_name, "${count.index + 1}")
   }
 }

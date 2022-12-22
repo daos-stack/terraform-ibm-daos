@@ -15,6 +15,9 @@
  */
 
 locals {
+  base_name           = try("${var.resource_prefix}-${var.instance_base_name}", "${var.instance_base_name}")
+  admin_instance_name = "${local.base_name}-001"
+
   ssh_key_ids = [
     for ssh_key in data.ibm_is_ssh_key.ssh_keys : {
       id = ssh_key.id
@@ -27,24 +30,53 @@ locals {
     }
   ]
 
-  user_data_script = templatefile("${path.module}/templates/user_data.sh.tftpl",
+  cloud_init_parts = [
     {
-      ansible_install_script_url = var.ansible_install_script_url
-      ansible_playbooks          = var.ansible_playbooks
-      access_points              = var.daos_access_points
+      file_path    = "${path.module}/templates/cloud-init.yaml.tftpl"
+      content_type = "text/cloud-config"
+      vars = {
+        admin_instance_name        = local.admin_instance_name
+        ansible_private_key_pem    = base64encode(var.ansible_private_key_pem)
+        ansible_public_key         = var.ansible_public_key
+        bastion_public_key         = var.bastion_public_key
+        daos_admin_private_key_pem = base64encode(var.daos_admin_private_key_pem)
+        daos_admin_public_key      = var.daos_admin_public_key
+        daos_client_instances      = var.daos_client_instances
+        daos_server_instances      = var.daos_server_instances
+      }
+    },
+    {
+      file_path    = "${path.module}/templates/startup-script.sh.tftpl"
+      content_type = "x-shellscript-per-once"
+      vars = {
+        access_points              = var.daos_access_points
+        ansible_install_script_url = var.ansible_install_script_url
+        ansible_playbooks          = var.ansible_playbooks
+      }
     }
-  )
+  ]
+
+  cloud_init_parts_rendered = [for part in local.cloud_init_parts : <<EOT
+--MIMEBOUNDARY
+Content-Transfer-Encoding: 7bit
+Content-Type: ${part.content_type}
+Mime-Version: 1.0
+
+${templatefile(part.file_path, part.vars)}
+    EOT
+  ]
+
+  user_data = templatefile("${path.module}/templates/cloud-init.tftpl", { cloud_init_parts = local.cloud_init_parts_rendered })
 
 }
 
-
 # This template format can be used with instance groups
 resource "ibm_is_instance_template" "daos_admin" {
-  name      = "${var.instance_base_name}-it"
+  name      = "${local.base_name}-it"
   image     = data.ibm_is_image.daos_admin_os_image.id
   keys      = [for ssh_key in local.ssh_key_ids : ssh_key.id]
   profile   = var.instance_profile_name
-  user_data = local.user_data_script
+  user_data = local.user_data
   vpc       = data.ibm_is_vpc.daos_admin.id
   zone      = var.zone
 
@@ -54,19 +86,11 @@ resource "ibm_is_instance_template" "daos_admin" {
     name            = "eth0"
     subnet          = data.ibm_is_subnet.daos_admin.id
     security_groups = [for sg in data.ibm_is_security_group.daos_admin : sg.id]
-    # security_groups = var.security_group_names
-    # security_groups = local.security_group_ids
-    # security_groups = data.ibm_is_security_group.admin
-    #security_groups = [data.ibm_is_security_group.admin]
-    #security_groups = ["${data.ibm_is_security_group.admin}"]
-    #security_groups = [data.ibm_is_security_group.admin]
-    #security_groups = toset(data.ibm_is_security_group.admin)
-    #security_groups = [ibm_is_security_group.bastion]
   }
 }
 
 resource "ibm_is_instance" "daos_admin" {
-  name              = "${var.instance_base_name}-001"
+  name              = local.admin_instance_name
   instance_template = ibm_is_instance_template.daos_admin.id
 
   boot_volume {
@@ -75,6 +99,6 @@ resource "ibm_is_instance" "daos_admin" {
 }
 
 resource "ibm_is_floating_ip" "daos_admin" {
-  name   = "${var.instance_base_name}-floating-ip"
+  name   = "${local.base_name}-floating-ip"
   target = ibm_is_instance.daos_admin.primary_network_interface[0].id
 }

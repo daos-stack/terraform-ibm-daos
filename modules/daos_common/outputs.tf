@@ -14,10 +14,28 @@
  * limitations under the License.
  */
 
-resource "ibm_is_vpc" "daos" {
-  name                        = "${var.name}-vpc"
-  resource_group              = data.ibm_resource_group.daos.id
-  default_network_acl_name    = "${var.name}-default-acl"
-  default_security_group_name = "${var.name}-default-sg"
-  default_routing_table_name  = "${var.name}-default-rt"
+output "ansible_key_name" {
+  value = ibm_is_ssh_key.ansible.name
+}
+
+output "ansible_private_key_pem" {
+  value     = tls_private_key.ansible.private_key_pem
+  sensitive = true
+}
+
+output "ansible_public_key" {
+  value = tls_private_key.ansible.public_key_openssh
+}
+
+output "daos_admin_key_name" {
+  value = ibm_is_ssh_key.daos_admin.name
+}
+
+output "daos_admin_private_key_pem" {
+  value     = tls_private_key.daos_admin.private_key_pem
+  sensitive = true
+}
+
+output "daos_admin_public_key" {
+  value = tls_private_key.daos_admin.public_key_openssh
 }

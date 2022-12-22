@@ -21,30 +21,30 @@ output "region" {
 
 output "id" {
   description = "The ID of the VPC"
-  value       = ibm_is_vpc.daos_vpc.id
+  value       = ibm_is_vpc.daos.id
 }
 
 output "crn" {
   description = "The CRN of the VPC"
-  value       = ibm_is_vpc.daos_vpc.crn
+  value       = ibm_is_vpc.daos.crn
 }
 
 output "name" {
   description = "The name of the VPC"
-  value       = ibm_is_vpc.daos_vpc.name
+  value       = ibm_is_vpc.daos.name
 }
 
 output "subnet_names" {
   description = "The names of the subnets in the VPC"
-  value       = ibm_is_subnet.daos_sn[*].name
+  value       = ibm_is_subnet.daos[*].name
 }
 
-output "bastion_sg_name" {
+output "bastion_security_group_name" {
   description = "The name of the bastion security group"
   value       = ibm_is_security_group.bastion.name
 }
 
-output "instance_sg_name" {
+output "instance_security_group_name" {
   description = "The name of the instance security group"
   value       = ibm_is_security_group.instance.name
 }

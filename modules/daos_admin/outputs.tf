@@ -49,14 +49,19 @@ output "instance_profile_name" {
   value       = var.instance_profile_name
 }
 
+output "instance_name" {
+  description = "Name of the DAOS admin instance"
+  value       = local.admin_instance_name
+}
+
 output "os_image_name" {
   description = ""
   value       = var.os_image_name
 }
 
-output "floating_ip" {
+output "public_ip" {
   description = "DAOS Admin instance floating IP"
-  value       = ibm_is_floating_ip.daos_admin
+  value       = ibm_is_floating_ip.daos_admin.address
 }
 
 output "security_group_names" {
@@ -64,15 +69,12 @@ output "security_group_names" {
   value       = var.security_group_names
 }
 
-/* output "security_groups" {
-  description = "List of Security Groups attached to the DAOS admin instance"
-  value       = [for sg in data.ibm_is_security_group.admin[*] : sg.name]
-} */
-/*
-output "user_data_script" {
-  value = local.user_data_script
-}*/
+output "admin_security_group" {
+  description = "Security group attached to the DAOS admin instance"
+  value       = data.ibm_is_security_group.daos_admin
+}
 
-output "admin_security_groups" {
-  value = data.ibm_is_security_group.daos_admin
+output "floating_ip_address" {
+  description = "External IP address for the DAOS admin instance"
+  value       = ibm_is_floating_ip.daos_admin.address
 }

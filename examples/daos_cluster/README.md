@@ -1,4 +1,4 @@
-# DAOS Cluster in a new VPC
+# DAOS Cluster in an existing VPC
 
 - [Overview](#overview)
   - [VPC](#vpc)
@@ -28,7 +28,7 @@
 
 ## Overview
 
-This example Terraform configuration will create a new VPC and then deploy a DAOS cluster in the new VPC.
+This example Terraform configuration is almost exactly the same as the [examples/daos_cluster](../../examples/daos_cluster/README.md) example. The only difference is that a VPC will not be created specifically for the DAOS cluster deployment. Instead, you will need to set variables in a `terraform.tfvars` file that contains the information about an existing VPC. Instructions are provided in the following sections.
 
 The DAOS cluster will contain:
 
@@ -38,16 +38,17 @@ The DAOS cluster will contain:
 
 ### VPC
 
-The VPC will have a subnet within each zone in the `us-south` region.
+The following information about an existing VPC is required.
 
-The compute instances will be provisioned in the `us-south-3` zone.
-
-The `daos-admin-001` instance will be assigned the bastion security group which allows access to port 22 from 0.0.0.0.  To restrict access to specific CIDRs you can set the `bastion_ssh_allowed_ips` variable in a `examples/daos_cluster_new_vpc/terraform.tfvars` vars file.
-
-The `daos-server-*` and `daos-client-*` instances will be assigned the internal security group which allows access from the `daos-admin-001` instance.
-
-
-![Example VPC](../../docs/images/ibm_multi-zone_vpc.png)
+| Terraform Variable         | Description                                                                   |
+| -------------------------- | ----------------------------------------------------------------------------- |
+| vpc_name                   | The name of the VPC                                                           |
+| server_subnet_name         | The name of the subnet in which the DAOS server instances will be provisioned |
+| server_security_group_name | The name of the security group to attach to DAOS server instances             |
+| client_subnet_name         | The name of the subnet in which the DAOS client instances will be provisioned |
+| client_security_group_name | The name of the security group to attach to DAOS client instances             |
+| admin_subnet_name          | The name of the subnet in which the DAOS admin instances will be provisioned  |
+| admin_security_group_name  | The name of the security group to attach to DAOS admin instances              |
 
 ### DAOS Storage
 
@@ -67,9 +68,9 @@ See the instructions below for details.
   To create an `ibmcloud_api_key`:
 
   1. Go to https://cloud.ibm.com/iam/apikeys
-  2. Select the *My IBM Cloud API Keys* option from the View dropdown
-  3. Click on the *Create* button
-  4. Enter a Name and Description then click *Create*
+  2. Select the _My IBM Cloud API Keys_ option from the View dropdown
+  3. Click on the _Create_ button
+  4. Enter a Name and Description then click _Create_
   5. Copy the API Key or click download to save it
 
 - [x] A [Classic infrastructure API Key (iaas_classic_api_key)](https://cloud.ibm.com/docs/account?topic=account-manapikey)
@@ -77,7 +78,7 @@ See the instructions below for details.
   To get your `iaas_classic_api_key`
 
   1. Go to https://cloud.ibm.com/iam/apikeys
-  2. Select the *Classic infrastructure API keys* option from the View dropdown
+  2. Select the _Classic infrastructure API keys_ option from the View dropdown
   3. View the details for the key that is shown
   4. Copy the API Key
 
@@ -85,18 +86,17 @@ See the instructions below for details.
 
   1. Go to [Users](https://cloud.ibm.com/iam/users)
   2. Click on your user name
-  3. On the *User details* tab scroll down to the VPN password section
-  4. Copy the *User name*
+  3. On the _User details_ tab scroll down to the VPN password section
+  4. Copy the _User name_
 
 - [x] SSH key pair
       Your public key will be added to the `daos_admin` account on DAOS admin instance (bastion).
       When you connect to the instance as `daos_admin` you will need to use your private key.
 
 - [x] [Install Git](https://git-scm.com/downloads) for your platform
-      Already installed in IBM Cloud Shell
 
 - [x] [Install Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli) for your platform
-      Already installed in IBM Cloud Shell
+
 
 - [x] Set the following environment variables in your shell
 
@@ -128,17 +128,42 @@ See the instructions below for details.
 ### Terraform
 
 1. Clone the repository and check out the `develop` branch
+
    ```bash
    cd ~/
    git clone https://github.com/daos-stack/terraform-ibm-daos.git
    cd terraform-ibm-daos
    git checkout develop
    ```
-2. Change into the `examples/daos_cluster_new_vpc` directory
+
+2. Change into the `examples/daos_cluster` directory
+
    ```bash
-   cd examples/daos_cluster_new_vpc
+   cd examples/daos_cluster
    ```
-3. Run terraform
+
+3. Create a `terraform.tfvars` file
+
+   ```bash
+   cp terraform.tfvars.example terraform.tfvars
+   ```
+
+   Edit the file and add the required values for the variables.
+
+   With the [ibmcloud CLI](https://www.ibm.com/cloud/cli?utm_content=SRCWW&p1=Search&p4=43700064662671693&p5=p&gclid=CjwKCAiAnZCdBhBmEiwA8nDQxdx7vEZPd83Y9m4AImoFWw-8kgqfmPzQWYLotPZvFnpn-bgw7993DRoCBckQAvD_BwE&gclsrc=aw.ds) and [jq](https://stedolan.github.io/jq/) installed the values can be found as shown
+
+   ```bash
+   # VPC names
+   ibmcloud is vpcs --output JSON | jq -r '.[].name'
+
+   # Subnets
+   ibmcloud is subnets --output JSON | jq -r '.[].name'
+
+   # Security Groups
+   ibmcloud is security-groups --output JSON | jq -r '.[].name'
+   ```
+
+4. Run terraform
 
    Before running `terraform` load the environment variables shown in the Prerequisites section above.
 
@@ -379,13 +404,13 @@ Failure to do so will incur unnecessary charges.
 To destroy all resources:
 
 ```bash
-cd examples/daos_cluster_new_vpc
+cd examples/daos_cluster
 terraform destroy
 ```
 
 ## Terraform Reference
 
-The following documentation for the `daos_cluster_new_vpc` example Terraform configuration was auto generated.
+The following documentation for the `daos_cluster` example Terraform configuration was auto generated.
 
 ### License
 
@@ -422,7 +447,6 @@ No providers.
 | <a name="module_daos_client"></a> [daos\_client](#module\_daos\_client) | ../../modules/daos_client | n/a |
 | <a name="module_daos_common"></a> [daos\_common](#module\_daos\_common) | ../../modules/daos_common | n/a |
 | <a name="module_daos_server"></a> [daos\_server](#module\_daos\_server) | ../../modules/daos_server | n/a |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | ../../modules/vpc | n/a |
 
 ### Resources
 
@@ -434,24 +458,30 @@ No resources.
 |------|-------------|------|---------|:--------:|
 | <a name="input_admin_ansible_install_script_url"></a> [admin\_ansible\_install\_script\_url](#input\_admin\_ansible\_install\_script\_url) | URL for script that installs Ansible | `string` | `"https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/develop/install_ansible.sh"` | no |
 | <a name="input_admin_ansible_playbooks"></a> [admin\_ansible\_playbooks](#input\_admin\_ansible\_playbooks) | Ansible information to be used in a template that generates a user\_data script | <pre>list(object({<br>    venv_dir           = string<br>    collection_fqn     = string<br>    collection_git_url = string<br>    playbook_fqn       = string<br>  }))</pre> | <pre>[<br>  {<br>    "collection_fqn": "daos_stack.daos",<br>    "collection_git_url": "git+https://github.com/daos-stack/ansible-collection-daos.git,develop",<br>    "playbook_fqn": "daos_stack.daos.daos_cluster",<br>    "venv_dir": "/root/daos-ansible/venv"<br>  }<br>]</pre> | no |
+| <a name="input_admin_instance_base_name"></a> [admin\_instance\_base\_name](#input\_admin\_instance\_base\_name) | DAOS admin instance base name | `string` | `"daos-admin"` | no |
+| <a name="input_admin_security_group_name"></a> [admin\_security\_group\_name](#input\_admin\_security\_group\_name) | Name of security group to attach to DAOS admin instance | `string` | n/a | yes |
+| <a name="input_admin_subnet_name"></a> [admin\_subnet\_name](#input\_admin\_subnet\_name) | DAOS admin instance subnet name | `string` | n/a | yes |
 | <a name="input_bastion_public_key"></a> [bastion\_public\_key](#input\_bastion\_public\_key) | Public key data in 'Authorized Keys' format to allow you to log into the bastion host as the daos\_admin user. | `string` | n/a | yes |
-| <a name="input_bastion_ssh_allowed_ips"></a> [bastion\_ssh\_allowed\_ips](#input\_bastion\_ssh\_allowed\_ips) | Allowed CIDRs for ingress rules to the bastion Security Group | <pre>list(object({<br>    name = string<br>    cidr = string<br>  }))</pre> | <pre>[<br>  {<br>    "cidr": "0.0.0.0/0",<br>    "name": "ANY"<br>  }<br>]</pre> | no |
+| <a name="input_client_instance_base_name"></a> [client\_instance\_base\_name](#input\_client\_instance\_base\_name) | DAOS client instance base name | `string` | `"daos-client"` | no |
 | <a name="input_client_instance_count"></a> [client\_instance\_count](#input\_client\_instance\_count) | Number of DAOS client instances to deploy | `number` | `1` | no |
+| <a name="input_client_security_group_name"></a> [client\_security\_group\_name](#input\_client\_security\_group\_name) | DAOS client security group | `string` | n/a | yes |
+| <a name="input_client_subnet_name"></a> [client\_subnet\_name](#input\_client\_subnet\_name) | DAOS client instances subnet name | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | IBM Cloud Region where resources will be deployed | `string` | `"us-south"` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group | `string` | `"Default"` | no |
 | <a name="input_resource_prefix"></a> [resource\_prefix](#input\_resource\_prefix) | String to prepend to all resource names | `string` | `null` | no |
 | <a name="input_server_instance_base_name"></a> [server\_instance\_base\_name](#input\_server\_instance\_base\_name) | DAOS server instance base name | `string` | `"daos-server"` | no |
 | <a name="input_server_instance_count"></a> [server\_instance\_count](#input\_server\_instance\_count) | Number of DAOS server instances to deploy | `number` | `1` | no |
-| <a name="input_server_use_bare_metal"></a> [server\_use\_bare\_metal](#input\_server\_use\_bare\_metal) | Use bare metal for DAOS server instances | `bool` | `true` | no |
-| <a name="input_ssh_key_names"></a> [ssh\_key\_names](#input\_ssh\_key\_names) | List of SSH key names to add to DAOS instances | `list(string)` | `[]` | no |
-| <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name of VPC where DAOS instances will be deployed | `string` | `"daos"` | no |
+| <a name="input_server_security_group_name"></a> [server\_security\_group\_name](#input\_server\_security\_group\_name) | DAOS server security group | `string` | n/a | yes |
+| <a name="input_server_subnet_name"></a> [server\_subnet\_name](#input\_server\_subnet\_name) | DAOS server instances subnet name | `string` | n/a | yes |
+| <a name="input_server_use_bare_metal"></a> [server\_use\_bare\_metal](#input\_server\_use\_bare\_metal) | Use bare metal for DAOS server instances | `bool` | `false` | no |
+| <a name="input_ssh_key_names"></a> [ssh\_key\_names](#input\_ssh\_key\_names) | List of SSH key names to add to DAOS instances | `list(string)` | <pre>[<br>  "daos-cluster"<br>]</pre> | no |
+| <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name of VPC where DAOS instances will be deployed | `string` | n/a | yes |
 | <a name="input_zone"></a> [zone](#input\_zone) | IBM Cloud Zone | `string` | `"us-south-3"` | no |
 
 ### Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_bastion_ip_address"></a> [bastion\_ip\_address](#output\_bastion\_ip\_address) | External floating IP for the DAOS admin instance (bastion) |
 | <a name="output_region"></a> [region](#output\_region) | IBM Cloud region |
 | <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | Resource group name for DAOS cluster resources |
 | <a name="output_zone"></a> [zone](#output\_zone) | IBM Cloud zone |

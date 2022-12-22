@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-
-
 variable "region" {
   description = "IBM Cloud Region"
   default     = "us-south"
@@ -49,7 +47,13 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "enable_bare_metal" {
+variable "resource_prefix" {
+  description = "String to prepend to all resource names"
+  type        = string
+  default     = null
+}
+
+variable "use_bare_metal" {
   description = "Use bare metal instances"
   default     = true
   type        = bool
@@ -74,7 +78,7 @@ variable "instance_bare_metal_profile_name" {
 }
 
 variable "instance_base_name" {
-  description = "resource_prefix to assign to all instances"
+  description = "Base name for instances"
   default     = "daos-server"
   type        = string
 }
@@ -96,31 +100,14 @@ variable "ssh_key_names" {
 variable "bare_metal_image_id" {
   type    = string
   default = "r006-d2a541d6-ceac-420d-a612-8ab43453f376" # ibm-redhat-8-6-minimal-amd64-3
-  #default = "r006-ddca7216-184b-49a1-83d1-bfd3b356cd97" # ibm-redhat-8-4-minimal-amd64-4
 }
 
-variable "ansible_install_script_url" {
-  description = "URL for script that installs Ansible"
+variable "daos_admin_public_key" {
+  description = "Public key data for the daos_admin user in 'Authorized Keys' format"
   type        = string
-  default     = "https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/main/install_ansible.sh"
 }
 
-# List of Ansible playbooks that exist within collections.
-# Playbooks will run in the order specified.
-variable "ansible_playbooks" {
-  description = "Ansible information to be used in a template that generates a user_data script"
-  type = list(object({
-    venv_dir           = string
-    collection_fqn     = string
-    collection_git_url = string
-    playbook_fqn       = string
-  }))
-  default = [
-    {
-      venv_dir           = "/usr/local/ansible-collection-daos/venv"
-      collection_fqn     = "daos_stack.daos"
-      collection_git_url = "git+https://github.com/daos-stack/ansible-collection-daos.git,main"
-      playbook_fqn       = "daos_stack.daos.daos_install"
-    }
-  ]
+variable "ansible_public_key" {
+  description = "Public key data for the ansible user in 'Authorized Keys' format"
+  type        = string
 }

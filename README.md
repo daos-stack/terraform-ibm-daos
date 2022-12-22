@@ -1,58 +1,67 @@
 # terraform-ibm-daos
 
-DAOS Terraform modules for deploying DAOS on IBM Cloud
+Terraform modules for deploying [Distributed Asynchronous Object Storage (DAOS)](https://docs.daos.io/v2.2/)  on IBM Cloud
 
-Repository structure
+**Not recommended for production!**
 
-```bash
-./
-├── docs/                 - Documentation
-├── examples/             - Examples
-│   ├── daos_cluster/     - Example of how to use this module to deploy a DAOS cluster
-│   └── vpc               - Terraform configuration for a VPC to be used with other examples
-├── modules/              - Sub modules
-│   ├── daos_admin/       - Deploys DAOS admin instances
-│   ├── daos_client/      - Deploys DAOS client instances
-│   ├── daos_common/      - Deploys resources that are common between all instances
-│   └── daos_server/      - Deploys DAOS server instances
-├── tools/                - Tools used for development (pre-commit hooks, etc)
-├── LICENSE
-├── README.md
-├── main.tf               - Main module file for deploying a DAOS cluster
-├── outputs.tf            - Outputs for the main module
-├── requirements-dev.txt  - Pip packages needed for development of this module
-└── variables.tf          - Variables for the main module
-```
+The Terraform modules in this repo are in the early stages of development.
 
-## Warning!
+## Deploy a DAOS Cluster on IBM Cloud
 
-The Terraform modules and examples in this repo are in a very early development stage.
+The [examples](examples/) directory contains Terraform configurations that can be used to deploy a DAOS Cluster on IBM Cloud.
 
-The content in this repo should not be used for production environments.
+- [examples/daos_cluster](examples/daos_cluster/README.md) can be used to deploy a DAOS cluster in an existing VPC.
+- [examples/daos_cluster_new_vpc](examples/daos_cluster_new_vpc/README.md) can be used to deploy a DAOS cluster in a new VPC.
 
-## Deploying a DAOS Cluster on IBM Cloud
+The [daos_cluster_new_vpc](examples/daos_cluster_new_vpc/README.md) example is preferred as it creates a dedicated VPC. This example is the quickest way to get started.
 
-The [examples](examples/) directory contains two example Terraform configurations that can be used to deploy a DAOS Cluster on IBM Cloud.
+## DAOS Versions
 
-1. [examples/vpc](examples/vpc/README.md) can be used to create a VPC if you do not already have one.
-2. [examples/daos_cluster](examples/daos_cluster/README.md) can be used to deploy a DAOS cluster in your VPC.
+The examples in this repo deploy DAOS v2.2
 
-### VPC setup
+## Support
 
-Before you can deploy a DAOS cluster using the [examples/daos_cluster](examples/daos_cluster/README.md) example you first need to create a VPC.
+As this is a pre-release version, support is limited and provided on a best effort basis.
 
-It is recommended that you create a VPC specifically for your DAOS deployment. If you have multiple team members using a single cloud account, each team member can create their own VPC.
+The following types of support are avaialable.
 
-See [examples/vpc/README.md](examples/vpc/README.md) for instructions.
+- **Community Support**
 
-### Deploying the daos_cluster example
+  Community support is provided on a best-effort basis and has no SLA attached.
 
-After you have created a VPC you may deploy a DAOS cluster using the [examples/daos_cluster](examples/daos_cluster/README.md) example
+  Community support is available to anyone via JIRA and Slack.
 
-The [examples/daos_cluster](examples/daos_cluster) directory contains a Terraform configuration that demonstrates how to use the Terraform modules in [modules](modules/) to deploy a DAOS cluster.
+  - **JIRA**
+    Issues with code under the https://github.com/daos-stack GitHub organization are tracked in JIRA Cloud.
 
-See [examples/daos_cluster/README.md](examples/daos_cluster/README.md)
+    JIRA Project URL:  https://daosio.atlassian.net/jira/software/c/projects/DAOS/issues/
+
+    In order to create and update issues (tickets), you will need to:
+
+      - Have an [Atlassian account](https://support.atlassian.com/atlassian-account/docs/create-an-atlassian-account/)
+
+      - Request access to the [DAOS JIRA project](https://daosio.atlassian.net/jira/software/c/projects/DAOS/issues/).
+
+  - **Slack**
+
+    [DAOS Community Channel on Slack](https://daos-stack.slack.com/archives/C4SM0RZ54)
+
+- **Commercial L3 Support**
+
+  Commercial L3 support is available from Intel Corporation via an on-demand basis.
+
+  For more information about commercial support please get in touch with Intel Corporation via the [DAOS Community Channel on Slack](https://daos-stack.slack.com/archives/C4SM0RZ54)
 
 ## Development
 
 If you are contributing content in this repository, please see the [development](docs/development.md) documentation.
+
+## Disclaimer
+
+All roles, playbooks, and other content in this repo are available for use "AS IS" without any warranties of any kind, including, but not limited to their installation, use, or performance. Intel Corporation is not responsible for any damage or charges or data loss incurred with their use. You are responsible for reviewing and testing any scripts you run thoroughly before use in any production environment. This content is subject to change without notice.
+
+## License
+
+Content in this repository is licensed under the [Apache License Version 2.0](LICENSE) open-source license.
+
+[DAOS](https://github.com/daos-stack/daos) is being distributed under the [BSD-2-Clause-Patent](https://github.com/daos-stack/daos/blob/master/LICENSE) open-source license.

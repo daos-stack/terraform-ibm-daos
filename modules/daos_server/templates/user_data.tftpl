@@ -1,0 +1,31 @@
+#cloud-config
+repo_update: true
+
+packages:
+  - curl
+  - wget
+  - git
+  - python39
+
+runcmd:
+  - [update-alternatives, --set, python3, /usr/bin/python3.9]
+
+users:
+  - name: ansible
+    gecos: Ansible User
+    groups: adm,systemd-journal
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: true
+    uid: 1000
+    ssh_authorized_keys:
+      - "${ansible_public_key}"
+  - name: daos_admin
+    gecos: DAOS Administrator
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: adm,systemd-journal
+    shell: /bin/bash
+    lock_passwd: true
+    uid: 1001
+    ssh_authorized_keys:
+      - "${daos_admin_public_key}"

@@ -50,7 +50,7 @@ output "instance_profile_name" {
 }
 
 output "instance_base_name" {
-  description = "resource_prefix assigned to all instances"
+  description = "Base name for instances"
   value       = var.instance_base_name
 }
 
@@ -75,5 +75,14 @@ output "ssh_key_names" {
 
 output "daos_client_names" {
   description = "List of DAOS client names"
-  value       = ibm_is_instance.daos_client.*.name
+  value       = flatten(ibm_is_instance.daos_client.*.name)
+}
+
+output "daos_client_instances" {
+  value = [for client in ibm_is_instance.daos_client :
+    {
+      name = "${client.name}"
+      ip   = "${client.primary_network_interface[0].primary_ip[0].address}"
+    }
+  ]
 }

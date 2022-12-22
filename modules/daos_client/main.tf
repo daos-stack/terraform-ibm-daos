@@ -15,8 +15,9 @@
  */
 
 locals {
-  first_client = format("%s-%03s", var.instance_base_name, 1)
-  clients      = var.instance_count == 1 ? local.first_client : format("%s-[%03s-%03s]", var.instance_base_name, 1, var.instance_count)
+  base_name    = try("${var.resource_prefix}-${var.instance_base_name}", "${var.instance_base_name}")
+  first_client = format("%s-%03s", local.base_name, 1)
+  clients      = var.instance_count == 1 ? local.first_client : format("%s-[%03s-%03s]", local.base_name, 1, var.instance_count)
 
   ssh_key_ids = [
     for ssh_key in data.ibm_is_ssh_key.ssh_keys : {
@@ -30,17 +31,14 @@ locals {
     }
   ]
 
-  /* user_data_script = templatefile("${path.module}/templates/user_data.sh.tftpl",
-    {
-      ansible_install_script_url = var.ansible_install_script_url
-      ansible_playbooks          = var.ansible_playbooks
-      access_points              = var.daos_access_points
-    }
-  ) */
+  user_data = templatefile("${path.module}/templates/user_data.tftpl", {
+    ansible_public_key    = var.ansible_public_key
+    daos_admin_public_key = var.daos_admin_public_key
+  })
 }
 
 resource "ibm_is_instance_template" "daos_client" {
-  name    = "${var.instance_base_name}-it"
+  name    = "${local.base_name}-it"
   image   = data.ibm_is_image.daos_client_os_image.id
   keys    = [for ssh_key in local.ssh_key_ids : ssh_key.id]
   profile = var.instance_profile_name
@@ -51,7 +49,7 @@ resource "ibm_is_instance_template" "daos_client" {
 
   metadata_service_enabled = true
 
-  #user_data = local.user_data_script
+  user_data = local.user_data
 
   primary_network_interface {
     name            = "eth0"
@@ -62,11 +60,11 @@ resource "ibm_is_instance_template" "daos_client" {
 
 resource "ibm_is_instance" "daos_client" {
   count = var.instance_count
-  name  = format("%s-%03s", var.instance_base_name, "${count.index + 1}")
+  name  = format("%s-%03s", local.base_name, "${count.index + 1}")
 
   instance_template = ibm_is_instance_template.daos_client.id
 
   boot_volume {
-    name = format("%s-%03s-bv", var.instance_base_name, "${count.index + 1}")
+    name = format("%s-%03s-bv", local.base_name, "${count.index + 1}")
   }
 }

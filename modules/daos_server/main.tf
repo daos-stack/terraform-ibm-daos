@@ -15,10 +15,11 @@
  */
 
 locals {
-  first_server  = format("%s-%03s", var.instance_base_name, 1)
-  servers       = var.instance_count == 1 ? local.first_server : format("%s-[%03s-%03s]", var.instance_base_name, 1, var.instance_count)
+  base_name     = try("${var.resource_prefix}-${var.instance_base_name}", "${var.instance_base_name}")
+  first_server  = format("%s-%03s", local.base_name, 1)
+  server_names  = var.instance_count == 1 ? local.first_server : format("%s-[%03s-%03s]", local.base_name, 1, var.instance_count)
   max_aps       = var.instance_count > 5 ? 5 : (var.instance_count % 2) == 1 ? var.instance_count : var.instance_count - 1
-  access_points = formatlist("%s-%03s", var.instance_base_name, range(1, local.max_aps + 1))
+  access_points = formatlist("%s-%03s", local.base_name, range(1, local.max_aps + 1))
 
   ssh_key_ids = [
     for ssh_key in data.ibm_is_ssh_key.ssh_keys : {
@@ -32,11 +33,8 @@ locals {
     ]
   ]
 
-  user_data_script = templatefile("${path.module}/templates/user_data.sh.tftpl",
-    {
-      ansible_install_script_url = var.ansible_install_script_url
-      ansible_playbooks          = var.ansible_playbooks
-      access_points              = local.access_points
-    }
-  )
+  user_data = templatefile("${path.module}/templates/user_data.tftpl", {
+    ansible_public_key    = var.ansible_public_key
+    daos_admin_public_key = var.daos_admin_public_key
+  })
 }

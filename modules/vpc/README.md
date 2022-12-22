@@ -78,59 +78,58 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.46.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.46.0 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_ibm"></a> [ibm](#provider\_ibm) | 1.46.0 |
+| <a name="provider_ibm"></a> [ibm](#provider\_ibm) | >= 1.46.0 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
-| [ibm_is_network_acl.allow_all](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_network_acl) | resource |
-| [ibm_is_public_gateway.daos_gw](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_public_gateway) | resource |
-| [ibm_is_security_group.bastion](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group) | resource |
-| [ibm_is_security_group.instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group) | resource |
-| [ibm_is_security_group_rule.bastion_egress_all](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
-| [ibm_is_security_group_rule.bastion_ingress_ssh](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
-| [ibm_is_security_group_rule.instance_egress](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
-| [ibm_is_security_group_rule.instance_ingress](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_security_group_rule) | resource |
-| [ibm_is_subnet.daos_sn](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_subnet) | resource |
-| [ibm_is_vpc.daos_vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/resources/is_vpc) | resource |
-| [ibm_is_region.region](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_region) | data source |
-| [ibm_is_zones.regional_zones](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/is_zones) | data source |
-| [ibm_resource_group.daos_rg](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.46.0/docs/data-sources/resource_group) | data source |
+| [ibm_is_network_acl.allow_all](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_network_acl) | resource |
+| [ibm_is_public_gateway.daos](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_public_gateway) | resource |
+| [ibm_is_security_group.bastion](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_security_group) | resource |
+| [ibm_is_security_group.instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_security_group) | resource |
+| [ibm_is_security_group_rule.bastion_egress_all](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_security_group_rule) | resource |
+| [ibm_is_security_group_rule.bastion_ingress_ssh](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_security_group_rule) | resource |
+| [ibm_is_security_group_rule.instance_egress](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_security_group_rule) | resource |
+| [ibm_is_security_group_rule.instance_ingress](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_security_group_rule) | resource |
+| [ibm_is_subnet.daos](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_subnet) | resource |
+| [ibm_is_vpc.daos](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_vpc) | resource |
+| [ibm_is_region.region](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_region) | data source |
+| [ibm_is_zones.regional_zones](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_zones) | data source |
+| [ibm_resource_group.daos](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/resource_group) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_bastion_sg_ssh_allowed_ips"></a> [bastion\_sg\_ssh\_allowed\_ips](#input\_bastion\_sg\_ssh\_allowed\_ips) | Allowed CIDRs for ingress rules to the bastion Security Group | <pre>list(object({<br>    name = string<br>    cidr = string<br>  }))</pre> | <pre>[<br>  {<br>    "cidr": "0.0.0.0/0",<br>    "name": "ANY"<br>  }<br>]</pre> | no |
-| <a name="input_ibmcloud_timeout"></a> [ibmcloud\_timeout](#input\_ibmcloud\_timeout) | The timeout, expressed in seconds, for interacting with IBM Cloud APIs | `number` | `900` | no |
-| <a name="input_region"></a> [region](#input\_region) | IBM Cloud Region where resources will be deployed | `string` | `"us-south"` | no |
+| <a name="input_bastion_ssh_allowed_ips"></a> [bastion\_ssh\_allowed\_ips](#input\_bastion\_ssh\_allowed\_ips) | Allowed CIDRs for ingress rules to the bastion Security Group | <pre>list(object({<br>    name = string<br>    cidr = string<br>  }))</pre> | <pre>[<br>  {<br>    "cidr": "0.0.0.0/0",<br>    "name": "ANY"<br>  }<br>]</pre> | no |
+| <a name="input_name"></a> [name](#input\_name) | Name of the VPC | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | IBM Cloud Region where resources will be deployed | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group | `string` | `"Default"` | no |
-| <a name="input_resource_prefix"></a> [resource\_prefix](#input\_resource\_prefix) | String that is prepended to all resource names | `string` | n/a | yes |
 | <a name="input_subnet_total_ipv4_address_count"></a> [subnet\_total\_ipv4\_address\_count](#input\_subnet\_total\_ipv4\_address\_count) | Total number of IPv4 addresses per subnet | `number` | `256` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_bastion_sg_name"></a> [bastion\_sg\_name](#output\_bastion\_sg\_name) | The name of the bastion security group |
+| <a name="output_bastion_security_group_name"></a> [bastion\_security\_group\_name](#output\_bastion\_security\_group\_name) | The name of the bastion security group |
 | <a name="output_crn"></a> [crn](#output\_crn) | The CRN of the VPC |
 | <a name="output_id"></a> [id](#output\_id) | The ID of the VPC |
-| <a name="output_instance_sg_name"></a> [instance\_sg\_name](#output\_instance\_sg\_name) | The name of the instance security group |
+| <a name="output_instance_security_group_name"></a> [instance\_security\_group\_name](#output\_instance\_security\_group\_name) | The name of the instance security group |
 | <a name="output_name"></a> [name](#output\_name) | The name of the VPC |
 | <a name="output_region"></a> [region](#output\_region) | IBM Cloud region |
 | <a name="output_subnet_names"></a> [subnet\_names](#output\_subnet\_names) | The names of the subnets in the VPC |

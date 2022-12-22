@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-data "ibm_resource_group" "daos" {
+data "ibm_resource_group" "main" {
   name = var.resource_group_name
 }

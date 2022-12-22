@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 data "ibm_is_vpc" "daos_server" {
   name = var.vpc_name
 }
