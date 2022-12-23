@@ -43,27 +43,16 @@ variable "vpc_name" {
   type        = string
 }
 
-/* variable "private_ssh_key_path" {
-  description = "Path to the local SSH key that will be used to connect to the DAOS admin instance (bastion)"
-  type        = string
-  default     = "~/.ssh/id_rsa"
-} */
-
 variable "bastion_public_key" {
   description = "Public key data in 'Authorized Keys' format to allow you to log into the bastion host as the daos_admin user."
   type        = string
 }
 
-/* variable "daos_admin_ssh_key_name" {
-  description = "Name of the generated SSH key pair that will be used to manage the DAOS cluster from the admin instance"
-  type        = string
-  default     = "example-daos-cluster"
-} */
 
 variable "ssh_key_names" {
   description = "List of SSH key names to add to DAOS instances"
   type        = list(string)
-  default     = ["daos-cluster"]
+  default     = []
 }
 
 #
@@ -76,16 +65,10 @@ variable "server_instance_count" {
   default     = 1
 }
 
-variable "server_instance_base_name" {
-  description = "DAOS server instance base name"
-  type        = string
-  default     = "daos-server"
-}
-
 variable "server_use_bare_metal" {
   description = "Use bare metal for DAOS server instances"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "server_subnet_name" {
@@ -109,12 +92,6 @@ variable "client_instance_count" {
   default     = 1
 }
 
-variable "client_instance_base_name" {
-  description = "DAOS client instance base name"
-  type        = string
-  default     = "daos-client"
-}
-
 variable "client_subnet_name" {
   description = "DAOS client instances subnet name"
   type        = string
@@ -130,12 +107,6 @@ variable "client_security_group_name" {
 # DAOS Admin
 #
 
-variable "admin_instance_base_name" {
-  description = "DAOS admin instance base name"
-  type        = string
-  default     = "daos-admin"
-}
-
 variable "admin_subnet_name" {
   description = "DAOS admin instance subnet name"
   type        = string
@@ -144,32 +115,4 @@ variable "admin_subnet_name" {
 variable "admin_security_group_name" {
   description = "Name of security group to attach to DAOS admin instance"
   type        = string
-}
-
-# TODO: Remove this override when
-#       https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/main/install_ansible.sh" is available
-variable "admin_ansible_install_script_url" {
-  description = "URL for script that installs Ansible"
-  type        = string
-  default     = "https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/develop/install_ansible.sh"
-}
-
-# TODO: Remove this override when
-#       https://github.com/daos-stack/ansible-collection-daos.git,main is available.
-variable "admin_ansible_playbooks" {
-  description = "Ansible information to be used in a template that generates a user_data script"
-  type = list(object({
-    venv_dir           = string
-    collection_fqn     = string
-    collection_git_url = string
-    playbook_fqn       = string
-  }))
-  default = [
-    {
-      venv_dir           = "/root/daos-ansible/venv"
-      collection_fqn     = "daos_stack.daos"
-      collection_git_url = "git+https://github.com/daos-stack/ansible-collection-daos.git,develop"
-      playbook_fqn       = "daos_stack.daos.daos_cluster"
-    }
-  ]
 }

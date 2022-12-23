@@ -79,12 +79,6 @@ variable "server_instance_count" {
   default     = 1
 }
 
-variable "server_instance_base_name" {
-  description = "DAOS server instance base name"
-  type        = string
-  default     = "daos-server"
-}
-
 variable "server_use_bare_metal" {
   description = "Use bare metal for DAOS server instances"
   type        = bool
@@ -100,39 +94,4 @@ variable "client_instance_count" {
   description = "Number of DAOS client instances to deploy"
   type        = number
   default     = 1
-}
-
-
-#
-# DAOS Admin
-#
-
-# TODO: Remove this override when
-#       https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/main/install_ansible.sh"
-#       is available
-variable "admin_ansible_install_script_url" {
-  description = "URL for script that installs Ansible"
-  type        = string
-  default     = "https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/develop/install_ansible.sh"
-}
-
-# TODO: Remove this override when
-#       https://github.com/daos-stack/ansible-collection-daos.git,main
-#       is available.
-variable "admin_ansible_playbooks" {
-  description = "Ansible information to be used in a template that generates a user_data script"
-  type = list(object({
-    venv_dir           = string
-    collection_fqn     = string
-    collection_git_url = string
-    playbook_fqn       = string
-  }))
-  default = [
-    {
-      venv_dir           = "/root/daos-ansible/venv"
-      collection_fqn     = "daos_stack.daos"
-      collection_git_url = "git+https://github.com/daos-stack/ansible-collection-daos.git,develop"
-      playbook_fqn       = "daos_stack.daos.daos_cluster"
-    }
-  ]
 }

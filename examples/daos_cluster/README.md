@@ -110,11 +110,11 @@ See the instructions below for details.
   # Optional. Will prefix your user name to all resources.
   # If working in a shared project this is useful for identifying owners of
   # resources within the project.
-  export TFVAR_resource_prefix="${USER}"
+  export TF_VAR_resource_prefix="${USER}"
 
   # The public SSH key that will be added to the ~/.ssh/authorized_keys file
   # of the daos_admin user on the admin instance (bastion)
-  export TFVAR_bastion_public_key="$(cat ~/.ssh/id_rsa.pub)"
+  export TF_VAR_bastion_public_key="$(cat ~/.ssh/id_rsa.pub)"
   ```
 
   Change the path to the public key if needed.
@@ -197,7 +197,7 @@ So if you log into the DAOS admin instance immediately after the `terraform appl
 
 ### Log into the DAOS Admin instance (bastion)
 
-The public key that was set in the `TFVAR_bastion_public_key` environment variable was deployed to the `~/.ssh/authorized_keys` file of the `daos_admin` user on the DAOS admin instance.
+The public key that was set in the `TF_VAR_bastion_public_key` environment variable was deployed to the `~/.ssh/authorized_keys` file of the `daos_admin` user on the DAOS admin instance.
 
 Get the `bastion_ip_address`
 
@@ -456,25 +456,20 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_admin_ansible_install_script_url"></a> [admin\_ansible\_install\_script\_url](#input\_admin\_ansible\_install\_script\_url) | URL for script that installs Ansible | `string` | `"https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/develop/install_ansible.sh"` | no |
-| <a name="input_admin_ansible_playbooks"></a> [admin\_ansible\_playbooks](#input\_admin\_ansible\_playbooks) | Ansible information to be used in a template that generates a user\_data script | <pre>list(object({<br>    venv_dir           = string<br>    collection_fqn     = string<br>    collection_git_url = string<br>    playbook_fqn       = string<br>  }))</pre> | <pre>[<br>  {<br>    "collection_fqn": "daos_stack.daos",<br>    "collection_git_url": "git+https://github.com/daos-stack/ansible-collection-daos.git,develop",<br>    "playbook_fqn": "daos_stack.daos.daos_cluster",<br>    "venv_dir": "/root/daos-ansible/venv"<br>  }<br>]</pre> | no |
-| <a name="input_admin_instance_base_name"></a> [admin\_instance\_base\_name](#input\_admin\_instance\_base\_name) | DAOS admin instance base name | `string` | `"daos-admin"` | no |
 | <a name="input_admin_security_group_name"></a> [admin\_security\_group\_name](#input\_admin\_security\_group\_name) | Name of security group to attach to DAOS admin instance | `string` | n/a | yes |
 | <a name="input_admin_subnet_name"></a> [admin\_subnet\_name](#input\_admin\_subnet\_name) | DAOS admin instance subnet name | `string` | n/a | yes |
 | <a name="input_bastion_public_key"></a> [bastion\_public\_key](#input\_bastion\_public\_key) | Public key data in 'Authorized Keys' format to allow you to log into the bastion host as the daos\_admin user. | `string` | n/a | yes |
-| <a name="input_client_instance_base_name"></a> [client\_instance\_base\_name](#input\_client\_instance\_base\_name) | DAOS client instance base name | `string` | `"daos-client"` | no |
 | <a name="input_client_instance_count"></a> [client\_instance\_count](#input\_client\_instance\_count) | Number of DAOS client instances to deploy | `number` | `1` | no |
 | <a name="input_client_security_group_name"></a> [client\_security\_group\_name](#input\_client\_security\_group\_name) | DAOS client security group | `string` | n/a | yes |
 | <a name="input_client_subnet_name"></a> [client\_subnet\_name](#input\_client\_subnet\_name) | DAOS client instances subnet name | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | IBM Cloud Region where resources will be deployed | `string` | `"us-south"` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group | `string` | `"Default"` | no |
 | <a name="input_resource_prefix"></a> [resource\_prefix](#input\_resource\_prefix) | String to prepend to all resource names | `string` | `null` | no |
-| <a name="input_server_instance_base_name"></a> [server\_instance\_base\_name](#input\_server\_instance\_base\_name) | DAOS server instance base name | `string` | `"daos-server"` | no |
 | <a name="input_server_instance_count"></a> [server\_instance\_count](#input\_server\_instance\_count) | Number of DAOS server instances to deploy | `number` | `1` | no |
 | <a name="input_server_security_group_name"></a> [server\_security\_group\_name](#input\_server\_security\_group\_name) | DAOS server security group | `string` | n/a | yes |
 | <a name="input_server_subnet_name"></a> [server\_subnet\_name](#input\_server\_subnet\_name) | DAOS server instances subnet name | `string` | n/a | yes |
-| <a name="input_server_use_bare_metal"></a> [server\_use\_bare\_metal](#input\_server\_use\_bare\_metal) | Use bare metal for DAOS server instances | `bool` | `false` | no |
-| <a name="input_ssh_key_names"></a> [ssh\_key\_names](#input\_ssh\_key\_names) | List of SSH key names to add to DAOS instances | `list(string)` | <pre>[<br>  "daos-cluster"<br>]</pre> | no |
+| <a name="input_server_use_bare_metal"></a> [server\_use\_bare\_metal](#input\_server\_use\_bare\_metal) | Use bare metal for DAOS server instances | `bool` | `true` | no |
+| <a name="input_ssh_key_names"></a> [ssh\_key\_names](#input\_ssh\_key\_names) | List of SSH key names to add to DAOS instances | `list(string)` | `[]` | no |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name of VPC where DAOS instances will be deployed | `string` | n/a | yes |
 | <a name="input_zone"></a> [zone](#input\_zone) | IBM Cloud Zone | `string` | `"us-south-3"` | no |
 

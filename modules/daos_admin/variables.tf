@@ -83,7 +83,7 @@ variable "security_group_names" {
 variable "ansible_install_script_url" {
   description = "URL for script that installs Ansible"
   type        = string
-  default     = "https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/main/install_ansible.sh"
+  default     = "https://raw.githubusercontent.com/daos-stack/ansible-collection-daos/v0.1.0/install_ansible.sh"
 }
 
 # List of Ansible playbooks that exist within collections.
@@ -100,7 +100,7 @@ variable "ansible_playbooks" {
     {
       venv_dir           = "/root/ansible-daos/venv"
       collection_fqn     = "daos_stack.daos"
-      collection_git_url = "git+https://github.com/daos-stack/ansible-collection-daos.git,main"
+      collection_git_url = "git+https://github.com/daos-stack/ansible-collection-daos.git,v0.1.0"
       playbook_fqn       = "daos_stack.daos.daos_cluster"
     }
   ]
