@@ -1,0 +1,225 @@
+#cloud-config
+repo_update: true
+
+packages:
+  - curl
+  - wget
+  - git
+  - python39
+
+write_files:
+  - encoding: b64
+    content: '${ansible_private_key_pem}'
+    owner: 'root:root'
+    path: /home/ansible/.ssh/id_rsa
+    permissions: '0600'
+  - encoding: b64
+    content: '${daos_admin_private_key_pem}'
+    owner: 'root:root'
+    path: /root/.ssh/id_rsa
+    permissions: '0600'
+  - encoding: b64
+    content: '${daos_admin_private_key_pem}'
+    owner: 'root:root'
+    path: /home/daos_admin/.ssh/id_rsa
+    permissions: '0600'
+  - content: |
+      Host *
+          CheckHostIp no
+          ForwardAgent yes
+          LogLevel error
+          PreferredAuthentications publickey,password
+          ServerAliveInterval 60
+          StrictHostKeyChecking no
+          TCPKeepAlive yes
+          UserKnownHostsFile /dev/null
+    path: /root/.ssh/config
+    owner: 'root:root'
+    permissions: '0600'
+  - content: |
+      127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4 ${admin_instance_name}
+      ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6 ${admin_instance_name}
+
+      %{~ for server in daos_server_instances}
+      ${server.ip}  ${server.name}
+      %{~endfor}
+      %{~ for client in daos_client_instances}
+      ${client.ip}  ${client.name}
+      %{~endfor}
+    path: /etc/hosts
+    owner: 'root:root'
+    permissions: '0644'
+  - content: |
+      [daos_servers]
+      %{~for server in daos_server_instances~}
+      ${server.name} ansible_host=${server.ip} %{if tobool(server.is_access_point)}is_access_point=true%{~endif}
+      %{~endfor~}
+
+      [daos_clients]
+      %{~for client in daos_client_instances~}
+      ${client.name} ansible_host=${client.ip}
+      %{~endfor~}
+
+      [daos_admins]
+      ${admin_instance_name} ansible_host=127.0.0.1 ansible_connection=local
+
+      [daos_cluster:children]
+      daos_clients
+      daos_servers
+      daos_admins
+    path: /root/ansible-daos/hosts
+    owner: 'root:root'
+    permissions: '0644'
+  - content: |
+      [defaults]
+      become=True
+      collections_path=~/.ansible/collections
+      collections_scan_sys_path=True
+      debug=False
+      deprecation_warnings=False
+      display_skipped_hosts=False
+      enable_task_debugger=False
+      executable=/bin/bash
+      forks=50
+      host_key_checking=False
+      interpreter_python=auto_silent
+      inventory=./hosts
+      local_tmp=~/.ansible/tmp
+      private_key_file=/home/ansible/.ssh/id_rsa
+      remote_user=ansible
+      system_warnings=False
+      use_persistent_connections=True
+      verbosity=0
+
+      [persistent_connection]
+      command_timeout=30
+      connect_retry_timeout=15
+      connect_timeout=30
+      control_path_dir={{ ANSIBLE_HOME ~ "/pc" }}
+
+      [connection]
+      pipelining=True
+
+      [ssh_connection]
+      control_path_dir=~/.ansible/cp
+      host_key_checking=False
+      pipelining=True
+      ssh_args = -o ControlMaster=auto -o ControlPersist=60s
+
+      [galaxy]
+      cache_dir=~/.ansible/galaxy_cache
+
+      [inventory]
+      any_unparsed_is_failed=True
+    path: /root/ansible-daos/ansible.cfg
+    owner: 'root:root'
+    permissions: '0644'
+  - content: |
+      daos_pools:
+        - label: pool1
+          size: "2TB"
+          tier_ratio: 3
+          user: root
+          group: root
+          acls:
+            - "A::EVERYONE@:rcta"
+          properties: []
+    path: /root/ansible-daos/group_vars/daos_admins/daos_storage
+    owner: 'root:root'
+    permissions: '0644'
+  - content: |
+      ---
+      tune_iommu_enable: true
+      tune_tuned_profile: daos-ibm
+
+      tune_tuned_daos_profile:
+        main:
+          summary: Customized network-latency tuned profile for DAOS
+          include: network-latency
+        bootloader:
+          cmdline: intel_iommu=on
+        sysctl:
+          # Per CCE-80916-0: Set kernel.randomize_va_space: 2
+          kernel.randomize_va_space: 2
+          net.ipv4.tcp_max_syn_backlog: 65536
+          net.ipv4.tcp_timestamps: 0
+          net.ipv4.tcp_sack: 1
+          net.core.netdev_max_backlog: 250000
+          net.core.rmem_max: 16777216
+          net.core.wmem_max: 16777216
+          net.core.rmem_default: 16777216
+          net.core.wmem_default: 16777216
+          net.core.optmem_max: 16777216
+          net.ipv4.tcp_rmem: 4096 87380 16777216
+          net.ipv4.tcp_wmem: 4096 65536 16777216
+          net.ipv4.tcp_low_latency: 1
+          net.ipv4.tcp_adv_win_scale: 1
+          net.core.somaxconn: 2048
+          net.ipv4.neigh.ens1.gc_stale_time: 2000000
+          net.ipv4.neigh.ens1.base_reachable_time_ms: 120000
+          net.ipv4.neigh.ens1.mcast_solicit: 18
+    path: /root/ansible-daos/group_vars/daos_servers/tuned
+    owner: 'root:root'
+    permissions: '0644'
+  - content: |
+      ---
+      daos_server_provider: "ofi+tcp;ofi_rxm"
+      daos_server_disable_vfio: "false"
+      daos_server_disable_vmd: "false"
+      daos_server_enable_hotplug: "false"
+      daos_server_crt_timeout: 60
+      daos_server_disable_hugepages: "false"
+      daos_server_control_log_mask: "INFO"
+      daos_server_log_dir: /var/daos
+      daos_server_control_log_file: "/var/daos/daos_server.log"
+      daos_server_helper_log_file: "/var/daos/daos_admin.log"
+      daos_server_firmware_helper_log_file: "/var/daos/daos_firmware.log"
+      daos_server_telemetry_port: 9191
+
+      daos_server_engines:
+        - targets: 16
+          nr_xs_helpers: 0
+          bypass_health_chk: true
+          fabric_iface: ens1
+          fabric_iface_port: 31316
+          log_mask: DEBUG
+          log_file: /var/daos/daos_engine_0.log
+          env_vars:
+            - "FI_OFI_RXM_DEF_TCP_WAIT_OBJ=pollfd"
+            - "DTX_AGG_THD_CNT=16777216"
+            - "DTX_AGG_THD_AGE=700"
+          storage:
+            - scm_mount: /var/daos/ram0
+              class: ram
+              scm_size: 300
+            - class: nvme
+              bdev_list: ["0000:5d:05.5","0000:3a:05.5","0000:85:05.5"]
+    path: /root/ansible-daos/group_vars/daos_servers/daos_server_config
+    owner: 'root:root'
+    permissions: '0644'
+
+runcmd:
+  - [update-alternatives, --set, python3, /usr/bin/python3.9]
+  - echo "alias ll='ls -alFh --color=always'" >> /root/.bashrc
+  - echo "alias cd-ansible-daos='cd /root/ansible-daos; source .venv/bin/activate'" >> /root/.bashrc
+
+users:
+  - name: ansible
+    gecos: Ansible User
+    groups: adm,systemd-journal
+    lock_passwd: true
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    uid: 1000
+    ssh_authorized_keys:
+      - "${ansible_public_key}"
+  - name: daos_admin
+    gecos: DAOS Administrator
+    groups: adm,systemd-journal
+    lock_passwd: true
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    uid: 1001
+    ssh_authorized_keys:
+      - "${daos_admin_public_key}"
+      - "${bastion_public_key}"

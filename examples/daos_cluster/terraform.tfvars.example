@@ -1,0 +1,18 @@
+# If you are following the instructions in the README.md
+# The following variables will be set as environment variables
+# You can also set those values here.
+
+# resource_prefix    = ""
+# bastion_public_key = ""
+
+
+#
+# Existing VPC information
+#
+vpc_name                   = ""
+server_subnet_name         = ""
+server_security_group_name = ""
+client_subnet_name         = ""
+client_security_group_name = ""
+admin_subnet_name          = ""
+admin_security_group_name  = ""
