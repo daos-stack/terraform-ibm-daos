@@ -28,6 +28,7 @@ module "daos_common" {
   resource_prefix     = var.resource_prefix
 }
 
+
 module "daos_server" {
   depends_on            = [module.daos_common]
   source                = "../../modules/daos_server"
@@ -37,7 +38,7 @@ module "daos_server" {
   resource_prefix       = var.resource_prefix
   instance_count        = var.server_instance_count
   use_bare_metal        = var.server_use_bare_metal
-  ssh_key_names         = var.ssh_key_names
+  ssh_key_names         = concat(var.ssh_key_names, [module.daos_common.daos_admin_key_name])
   vpc_name              = module.vpc.name
   subnet_name           = one([for item in module.vpc.subnet_names : item if can(regex(var.zone, item))])
   security_group_names  = [module.vpc.instance_security_group_name]
@@ -53,7 +54,7 @@ module "daos_client" {
   resource_group_name   = var.resource_group_name
   resource_prefix       = var.resource_prefix
   instance_count        = var.client_instance_count
-  ssh_key_names         = var.ssh_key_names
+  ssh_key_names         = concat(var.ssh_key_names, [module.daos_common.daos_admin_key_name])
   vpc_name              = module.vpc.name
   subnet_name           = one([for item in module.vpc.subnet_names : item if can(regex(var.zone, item))])
   security_group_names  = [module.vpc.instance_security_group_name]
@@ -77,7 +78,7 @@ module "daos_admin" {
   subnet_name          = one([for item in module.vpc.subnet_names : item if can(regex(var.zone, item))])
   security_group_names = [module.vpc.bastion_security_group_name]
 
-  ssh_key_names              = var.ssh_key_names
+  ssh_key_names              = concat(var.ssh_key_names, [module.daos_common.daos_admin_key_name])
   bastion_public_key         = var.bastion_public_key
   ansible_private_key_pem    = module.daos_common.ansible_private_key_pem
   ansible_public_key         = module.daos_common.ansible_public_key
@@ -86,7 +87,4 @@ module "daos_admin" {
 
   daos_client_instances = module.daos_client.daos_client_instances
   daos_server_instances = module.daos_server.daos_server_instances
-
-  ansible_install_script_url = var.admin_ansible_install_script_url
-  ansible_playbooks          = var.admin_ansible_playbooks
 }
