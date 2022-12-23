@@ -32,6 +32,7 @@ The following types of support are avaialable.
   Community support is available to anyone via JIRA and Slack.
 
   - **JIRA**
+
     Issues with code under the https://github.com/daos-stack GitHub organization are tracked in JIRA Cloud.
 
     JIRA Project URL:  https://daosio.atlassian.net/jira/software/c/projects/DAOS/issues/
