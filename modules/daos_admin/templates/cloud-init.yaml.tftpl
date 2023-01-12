@@ -185,9 +185,11 @@ write_files:
           log_mask: DEBUG
           log_file: /var/daos/daos_engine_0.log
           env_vars:
-            - "FI_OFI_RXM_DEF_TCP_WAIT_OBJ=pollfd"
-            - "DTX_AGG_THD_CNT=16777216"
-            - "DTX_AGG_THD_AGE=700"
+            - FI_OFI_RXM_DEF_TCP_WAIT_OBJ=pollfd
+            - DTX_AGG_THD_CNT=16777216
+            - DTX_AGG_THD_AGE=700
+            - ABT_THREAD_STACKSIZE=65536
+            - ABT_STACK_OVERFLOW_CHECK=mprotect
           storage:
             - scm_mount: /var/daos/ram0
               class: ram
