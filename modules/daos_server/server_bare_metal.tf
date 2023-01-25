@@ -18,12 +18,13 @@ resource "ibm_is_bare_metal_server" "daos_server" {
   count = var.use_bare_metal ? var.instance_count : 0
   name  = format("%s-%03s", local.base_name, "${count.index + 1}")
 
-  image     = var.bare_metal_image_id
-  keys      = [for ssh_key in local.ssh_key_ids : ssh_key.id]
-  profile   = var.instance_bare_metal_profile_name
-  user_data = local.user_data
-  vpc       = data.ibm_is_vpc.daos_server.id
-  zone      = var.zone
+  image          = data.ibm_is_image.daos_baremetal_image.id
+  keys           = [for ssh_key in local.ssh_key_ids : ssh_key.id]
+  profile        = var.instance_bare_metal_profile_name
+  user_data      = local.user_data
+  vpc            = data.ibm_is_vpc.daos_server.id
+  zone           = var.zone
+  resource_group = data.ibm_resource_group.daos.id
 
   primary_network_interface {
     name                      = "eth0"

@@ -26,6 +26,10 @@ data "ibm_is_image" "daos_server_os_image" {
   name = var.os_image_name
 }
 
+data "ibm_is_image" "daos_baremetal_image" {
+  name = var.bare_metal_image_id
+}
+
 data "ibm_resource_group" "daos" {
   name = var.resource_group_name
 }
