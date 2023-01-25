@@ -73,7 +73,7 @@ variable "instance_profile_name" {
 
 variable "instance_bare_metal_profile_name" {
   description = "Name of the instance profile for DAOS server bare metal instances"
-  default     = "bx2d-metal-96x384" # "cx2-metal-96x192"
+  default     = "bx2d-metal-96x384"
   type        = string
 }
 
