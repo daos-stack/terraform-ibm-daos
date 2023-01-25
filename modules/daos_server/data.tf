@@ -43,3 +43,7 @@ data "ibm_is_security_group" "daos_server" {
 data "ibm_is_security_groups" "daos_server" {
   vpc_name = var.vpc_name
 }
+
+data "ibm_is_image" "daos_baremetal_image" {
+  name = var.bare_metal_image_id
+}
