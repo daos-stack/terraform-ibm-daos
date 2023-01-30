@@ -94,7 +94,7 @@ resource "ibm_is_instance" "daos_admin" {
   instance_template = ibm_is_instance_template.daos_admin.id
 
   boot_volume {
-    name = "${var.instance_base_name}-001-bv"
+    name = "${var.resource_prefix}-${var.instance_base_name}-001-bv"
   }
 }
 

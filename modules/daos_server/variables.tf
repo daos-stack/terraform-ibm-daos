@@ -99,7 +99,7 @@ variable "ssh_key_names" {
 # ibmcloud is images --visibility public | grep -v deprecated
 variable "bare_metal_image_id" {
   type    = string
-  default = "r006-d2a541d6-ceac-420d-a612-8ab43453f376" # ibm-redhat-8-6-minimal-amd64-3
+  default = "ibm-redhat-8-6-minimal-amd64-3"
 }
 
 variable "daos_admin_public_key" {
