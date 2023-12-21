@@ -62,25 +62,23 @@ You will also need to install the dependencies that are required for the pre-com
    brew install coreutils
    ```
 
-   **Conda**
-
-   ```shell
-   brew install findutils
-   conda install coreutils
-   ```
-
    Update your PATH  in your `~/.bashrc` or `~/.bash_profile`
    ```shell
-   PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+   ### Use GNU coreutils instead of macOS default commands
+   if type brew &>/dev/null; then
+      export HOMEBREW_PREFIX=$(brew --prefix)
+      for d in "${HOMEBREW_PREFIX}/opt/*/libexec/gnubin"; do export PATH=$d:$PATH; done
+      for d in "${HOMEBREW_PREFIX}/opt/*/libexec/gnuman"; do export MANPATH=$d:$MANPATH; done
+   fi
    ```
 
 ## Install the pre-commit hook
 
-After you have installed [pre-commit](https://pre-commit.com/) and its dependencies on your system you can need to install the pre-commit hook in
-your local clone of the google-cloud-daos git repository.
+After you have installed [pre-commit](https://pre-commit.com/) and its dependencies on your system you need to install the pre-commit hook in
+your local clone of the terraform-ibm-daos git repository.
 
 ```shell
-cd <root of google-cloud-daos repo>
+cd <root of terraform-ibm-daos repo>
 pre-commit install
 ```
 

@@ -1,30 +1,31 @@
 # DAOS Cluster in a new VPC
 
-- [Overview](#overview)
-  - [VPC](#vpc)
-  - [DAOS Storage](#daos-storage)
-- [Prerequisites](#prerequisites)
-- [Deploy the VPC and DAOS Cluster](#deploy-the-vpc-and-daos-cluster)
-  - [Terraform](#terraform)
-  - [cloud-init and Ansible](#cloud-init-and-ansible)
-- [Use the DAOS Cluster](#use-the-daos-cluster)
-  - [Log into the DAOS Admin instance (bastion)](#log-into-the-daos-admin-instance-bastion)
-  - [Check the status of the DAOS cluster](#check-the-status-of-the-daos-cluster)
-  - [Check storage usage](#check-storage-usage)
-  - [Check the pools](#check-the-pools)
-  - [Create a container](#create-a-container)
-  - [Mount the container](#mount-the-container)
-  - [Use storage](#use-storage)
-  - [Unmount the container and logout of the admin instance](#unmount-the-container-and-logout-of-the-admin-instance)
-- [Destroy the Cluster](#destroy-the-cluster)
-- [Terraform Reference](#terraform-reference)
-  - [License](#license)
-  - [Requirements](#requirements)
-  - [Providers](#providers)
-  - [Modules](#modules)
-  - [Resources](#resources)
-  - [Inputs](#inputs)
-  - [Outputs](#outputs)
+- [DAOS Cluster in a new VPC](#daos-cluster-in-a-new-vpc)
+  - [Overview](#overview)
+    - [VPC](#vpc)
+    - [DAOS Storage](#daos-storage)
+  - [Prerequisites](#prerequisites)
+  - [Deploy the VPC and DAOS Cluster](#deploy-the-vpc-and-daos-cluster)
+    - [Terraform](#terraform)
+    - [cloud-init and Ansible](#cloud-init-and-ansible)
+  - [Use the DAOS Cluster](#use-the-daos-cluster)
+    - [Log into the DAOS Admin instance (bastion)](#log-into-the-daos-admin-instance-bastion)
+    - [Check the status of the DAOS cluster](#check-the-status-of-the-daos-cluster)
+    - [Check storage usage](#check-storage-usage)
+    - [Check the pools](#check-the-pools)
+    - [Create a container](#create-a-container)
+    - [Mount the container](#mount-the-container)
+    - [Use storage](#use-storage)
+    - [Unmount the container and logout of the admin instance](#unmount-the-container-and-logout-of-the-admin-instance)
+  - [Destroy the Cluster](#destroy-the-cluster)
+  - [Terraform Reference](#terraform-reference)
+    - [License](#license)
+    - [Requirements](#requirements)
+    - [Providers](#providers)
+    - [Modules](#modules)
+    - [Resources](#resources)
+    - [Inputs](#inputs)
+    - [Outputs](#outputs)
 
 ## Overview
 
@@ -158,7 +159,7 @@ You can run `terraform output` to see the outputs again.
 
 ### cloud-init and Ansible
 
-When the DAOS admin instance boots [cloud-init](https://cloudinit.readthedocs.io/en/latest/) will run the `user_data` which will
+When the DAOS admin instance boots [cloud-init](https://cloudinit.readthedocs.io/en/latest/) will run the `user_data` script which will
 
 1. Install Ansible
 2. Install the [Ansible Collection for DAOS](https://github.com/daos-stack/ansible-collection-daos)
@@ -166,7 +167,7 @@ When the DAOS admin instance boots [cloud-init](https://cloudinit.readthedocs.io
 
 Depending on the number of instances in the DAOS cluster the playbook can take up to 20-30 minutes to complete.
 
-So if you log into the DAOS admin instance immediately after the `terraform apply` command has finished, the cluster will still be in the process of being configured with Ansible.
+If you log into the DAOS admin instance immediately after the `terraform apply` command has finished, the cluster will likely be in the process of being configured with Ansible.
 
 ## Use the DAOS Cluster
 

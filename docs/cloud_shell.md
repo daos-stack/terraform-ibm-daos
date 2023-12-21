@@ -44,36 +44,25 @@ and examples in this repo.
    chmod 600 ~/.ssh/config
    ```
 
-3. Upload your private and public SSH key files to `~/.ssh`
-
-   When you click on the *Upload File* button (top right) it will upload your files to `~/`
-
-   You will need to move them to `~/.ssh`
-
-4. Set permissions
-
-   This assumes you are using RSA keys
+3. Create an SSH key pair
 
    ```bash
-   chmod 600 ~/.ssh/id_rsa
-   chmod 644 ~/.ssh/id_rsa.pub
-   chown -R ${USER} ~/.ssh
+   ssh-keygen -t rsa -b 4096 -f id_rsa -C "${USER}"
    ```
 
-5. Create a `~/.config/ibmcloud/ibmcloud.env` file
+4. Create a `~/.config/ibmcloud/ibmcloud.env` file
 
    ```bash
    mkdir -p ~/.config/ibmcloud
 
    cat > ~/.config/ibmcloud/ibmcloud.env <<EOF
-   export IC_API_KEY="ibmcloud_api_key"
-   export IAAS_CLASSIC_USERNAME="iaas_classic_username"
-   export IAAS_CLASSIC_API_KEY="iaas_classic_api_key"
+   export IC_API_KEY="<your_ibmcloud_api_key>"
+   export IAAS_CLASSIC_USERNAME="<your_email@example.com>"
+   export IAAS_CLASSIC_API_KEY="<iaas_classic_api_key>"
 
-   # Optional. Will prefix your user name to all resources.
-   # If working in a shared project this is useful for identifying  owners of
+   # Optional. To add a prefix to all resource names.
+   # If working in a shared project this is useful for identifying owners of
    # resources within the project.
-   # Cloud Shell usernames can be long. You may want to use a shorter string.
    # export TF_VAR_resource_prefix="${USER}"
 
    # The public SSH key that will be added to the ~/.ssh/ authorized_keys file
@@ -85,19 +74,3 @@ and examples in this repo.
 
    source ~/.config/ibmcloud/ibmcloud.env
    ```
-
-6. Install the latest version of Terraform
-
-   IBM Cloud Shell has a really old version of Terraform
-   installed. At the time of this writing v0.14 was installed and the latest is 1.3.6.
-
-   ```bash
-   mkdir ~/bin
-   export PATH=~/bin:$PATH
-   cd ~/bin
-   wget https://releases.hashicorp.com/terraform/1.3.6/terraform_1.3.6_linux_amd64.zip
-   unzip terraform_1.3.6_linux_amd64.zip
-   terraform -version
-   ```
-
-At this point you should be able to follow the instructions in the **Deploy the VPC and DAOS Cluster** section of the [examples/daos_cluster_new_vpc/README.md](../examples/daos_cluster_new_vpc/README.md#deploy-the-vpc-and-daos-cluster)
