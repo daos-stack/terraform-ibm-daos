@@ -9,7 +9,7 @@ This Terraform configuration will create a multi-zone VPC in one region.
 ![](ibm_multi-zone_vpc.png)
 
 - Within one region a subnet will be created for each zone.
-- The VCP will have 3 security groups
+- The VPC will have 3 security groups
   - A default security group - Typically this will not be used.
   - A bastion security group - Should be attached to the daos-admin instance. This allows ingress SSH from specific CIDRs to the daos-admin instance.
   - An instance security group - Should be attached to DAOS servers and clients. Allows ingress tcp communication from the subnet only.
